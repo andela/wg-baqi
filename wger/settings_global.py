@@ -103,6 +103,12 @@ BOWER_INSTALLED_APPS = (
     'sortablejs#1.4.x',
 )
 
+MIDDLEWARE = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware'
+)
+
 
 MIDDLEWARE_CLASSES = (
     'corsheaders.middleware.CorsMiddleware',
@@ -130,13 +136,14 @@ MIDDLEWARE_CLASSES = (
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'wger.utils.helpers.EmailAuthBackend'
+    'wger.utils.helpers.EmailAuthBackend',
 )
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # 'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'OPTIONS': {
             'context_processors': [
                 'wger.utils.context_processor.processor',
@@ -168,6 +175,16 @@ TEMPLATES = [
     },
 ]
 
+TEMPLATE_LOADERS = (
+    ('django_mobile.loader.CachedLoader', (
+        'django_mobile.loader.Loader',
+    )),
+)
+
+TEMPLATE_CONTEXT_PROCESSOR = (
+    
+)
+
 # Store the user messages in the session
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
@@ -186,7 +203,6 @@ STATICFILES_FINDERS = (
 # Email
 #
 EMAIL_SUBJECT_PREFIX = '[wger] '
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 #
@@ -210,7 +226,7 @@ USE_L10N = True
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = None
+TIME_ZONE = "Africa/Nairobi"
 
 # Restrict the available languages
 LANGUAGES = (
@@ -331,16 +347,20 @@ else:
 # Django Rest Framework
 #
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('wger.utils.permissions.WgerPermission',),
-    'PAGINATE_BY': 20,
-    'PAGINATE_BY_PARAM': 'limit',  # Allow client to override, using `?limit=xxx`.
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_PERMISSION_CLASSES': ('wger.utils.permissions.WgerPermission', ),
+    'PAGINATE_BY':
+    20,
+    'PAGINATE_BY_PARAM':
+    'limit',  # Allow client to override, using `?limit=xxx`.
+    'TEST_REQUEST_DEFAULT_FORMAT':
+    'json',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',
-                                'rest_framework.filters.OrderingFilter',)
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.OrderingFilter',
+    )
 }
 
 

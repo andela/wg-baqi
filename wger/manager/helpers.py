@@ -29,7 +29,7 @@ from reportlab.platypus import (
     Image
 )
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 from wger.utils.helpers import normalize_decimal
 

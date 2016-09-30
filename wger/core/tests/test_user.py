@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 
 from wger.core.tests.base_testcase import (
     WorkoutManagerTestCase,

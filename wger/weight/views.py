@@ -21,8 +21,8 @@ import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse
+from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils import formats
 from django.utils.translation import ugettext as _

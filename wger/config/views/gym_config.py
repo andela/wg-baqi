@@ -16,7 +16,7 @@
 
 import logging
 
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext as _
 from django.views.generic import UpdateView
 

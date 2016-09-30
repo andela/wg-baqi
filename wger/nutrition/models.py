@@ -23,7 +23,7 @@ from django.template.loader import render_to_string
 from django.template.defaultfilters import slugify  # django.utils.text.slugify in django 1.5!
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core import mail
 from django.core.cache import cache
 from django.contrib.auth.models import User
@@ -72,10 +72,10 @@ class NutritionPlan(models.Model):
 
     user = models.ForeignKey(User,
                              verbose_name=_('User'),
-                             editable=False)
+                             editable=False, on_delete=models.CASCADE)
     language = models.ForeignKey(Language,
                                  verbose_name=_('Language'),
-                                 editable=False)
+                                 editable=False, on_delete=models.CASCADE)
     creation_date = models.DateField(_('Creation date'), auto_now_add=True)
     description = models.TextField(max_length=2000,
                                    blank=True,
@@ -236,13 +236,13 @@ class Ingredient(AbstractLicenseModel, models.Model):
 
     language = models.ForeignKey(Language,
                                  verbose_name=_('Language'),
-                                 editable=False)
+                                 editable=False, on_delete=models.CASCADE)
 
     user = models.ForeignKey(User,
                              verbose_name=_('User'),
                              null=True,
                              blank=True,
-                             editable=False)
+                             editable=False, on_delete=models.CASCADE)
     '''The user that submitted the exercise'''
 
     status = models.CharField(max_length=2,
@@ -330,6 +330,9 @@ class Ingredient(AbstractLicenseModel, models.Model):
         '''
         return reverse('nutrition:ingredient:view',
                        kwargs={'id': self.id, 'slug': slugify(self.name)})
+
+    def __hash__(self):
+        return hash(self.pk)
 
     def clean(self):
         '''
@@ -453,7 +456,7 @@ class WeightUnit(models.Model):
 
     language = models.ForeignKey(Language,
                                  verbose_name=_('Language'),
-                                 editable=False)
+                                 editable=False, on_delete=models.CASCADE)
     name = models.CharField(max_length=200,
                             verbose_name=_('Name'),)
 
@@ -482,8 +485,8 @@ class IngredientWeightUnit(models.Model):
 
     ingredient = models.ForeignKey(Ingredient,
                                    verbose_name=_('Ingredient'),
-                                   editable=False)
-    unit = models.ForeignKey(WeightUnit, verbose_name=_('Weight unit'))
+                                   editable=False, on_delete=models.CASCADE)
+    unit = models.ForeignKey(WeightUnit, verbose_name=_('Weight unit'), on_delete=models.CASCADE)
 
     gram = models.IntegerField(verbose_name=_('Amount in grams'))
     amount = models.DecimalField(decimal_places=2,
@@ -520,7 +523,7 @@ class Meal(models.Model):
 
     plan = models.ForeignKey(NutritionPlan,
                              verbose_name=_('Nutrition plan'),
-                             editable=False)
+                             editable=False, on_delete=models.CASCADE)
     order = models.IntegerField(verbose_name=_('Order'),
                                 blank=True,
                                 editable=False)
@@ -577,13 +580,13 @@ class MealItem(models.Model):
 
     meal = models.ForeignKey(Meal,
                              verbose_name=_('Nutrition plan'),
-                             editable=False)
-    ingredient = models.ForeignKey(Ingredient, verbose_name=_('Ingredient'))
+                             editable=False, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, verbose_name=_('Ingredient'), on_delete=models.CASCADE)
     weight_unit = models.ForeignKey(IngredientWeightUnit,
                                     verbose_name=_('Weight unit'),
                                     null=True,
                                     blank=True,
-                                    )
+                                    on_delete=models.CASCADE)
 
     order = models.IntegerField(verbose_name=_('Order'),
                                 blank=True,

@@ -21,7 +21,7 @@ import datetime
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template.context_processors import csrf
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -173,7 +173,7 @@ def copy_workout(request, pk):
                     current_set_copy.save()
 
                     # Exercises has Many2Many relationship
-                    current_set_copy.exercises = exercises
+                    current_set_copy.exercises.set(exercises)
 
                     # Go through the exercises
                     for exercise in exercises:

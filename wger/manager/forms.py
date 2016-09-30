@@ -19,7 +19,7 @@ This file contains forms used in the application
 '''
 
 from captcha.fields import ReCaptchaField
-
+from captcha.widgets import ReCaptchaV2Invisible
 from django.utils.translation import ugettext as _
 from django.forms import (
     Form,
@@ -59,9 +59,7 @@ from wger.utils.widgets import Html5DateInput
 
 
 class DemoUserForm(Form):
-    captcha = ReCaptchaField(attrs={'theme': 'clean'},
-                             label=_('Confirmation text'),
-                             help_text=_('As a security measure, please enter the previous words'),)
+    captcha = ReCaptchaField(ReCaptchaV2Invisible)
 
 
 class WorkoutForm(ModelForm):

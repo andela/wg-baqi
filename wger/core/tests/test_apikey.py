@@ -15,7 +15,7 @@
 import logging
 
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework.authtoken.models import Token
 
 from wger.core.tests.base_testcase import WorkoutManagerTestCase

@@ -229,8 +229,6 @@ class ApiPostTestCase(object):
             # Different logged in user
             self.get_credentials(self.user_fail)
             response = self.client.post(self.url, data=self.data)
-            # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-            # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         else:
             # Anonymous user
@@ -395,7 +393,6 @@ class ApiPutTestCase(object):
             #
             # Currently resources that have a 'user' field 'succeed'
             if response.status_code == status.HTTP_201_CREATED:
-                # print('201: {0}'.format(self.url_detail))
                 obj = self.resource.objects.get(pk=response.data['id'])
                 obj2 = self.resource.objects.get(pk=self.pk)
                 self.assertNotEqual(obj.get_owner_object().user.username,
@@ -404,7 +401,6 @@ class ApiPutTestCase(object):
                 self.assertEqual(count_before + 1, count_after)
 
             elif response.status_code == status.HTTP_403_FORBIDDEN:
-                # print('403: {0}'.format(self.url_detail))
                 self.assertEqual(count_before, count_after)
         else:
             # Anonymous user

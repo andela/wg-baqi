@@ -14,7 +14,7 @@
 
 import datetime
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from wger.core.tests.base_testcase import WorkoutManagerTestCase
 from wger.gym.models import Gym

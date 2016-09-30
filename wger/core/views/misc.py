@@ -20,7 +20,7 @@ from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.core import mail
 from django.utils.translation import ugettext as _
 from django.views.generic.edit import FormView
@@ -50,7 +50,7 @@ def index(request):
     '''
     Index page
     '''
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('core:dashboard'))
     else:
         return HttpResponseRedirect(reverse('software:features'))
@@ -63,11 +63,11 @@ def demo_entries(request):
     if not settings.WGER_SETTINGS['ALLOW_GUEST_USERS']:
         return HttpResponseRedirect(reverse('software:features'))
 
-    if (((not request.user.is_authenticated() or request.user.userprofile.is_temporary)
-         and not request.session['has_demo_data'])):
+    if (((not request.user.is_authenticated or request.user.userprofile.is_temporary)
+          and not request.session['has_demo_data'])):
         # If we reach this from a page that has no user created by the
         # middleware, do that now
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             user = create_temporary_user()
             django_login(request, user)
 
@@ -156,7 +156,7 @@ class FeedbackClass(FormView):
         '''
         Fill in the contact, if available
         '''
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             return {'contact': self.request.user.email}
         return {}
 
@@ -179,7 +179,7 @@ class FeedbackClass(FormView):
         Load the correct feedback form depending on the user
         (either with reCaptcha field or not)
         '''
-        if self.request.user.is_anonymous() or self.request.user.userprofile.is_temporary:
+        if self.request.user.is_anonymous or self.request.user.userprofile.is_temporary:
             return FeedbackAnonymousForm
         else:
             return FeedbackRegisteredForm
