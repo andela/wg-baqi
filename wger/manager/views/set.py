@@ -19,7 +19,7 @@ import logging
 from django.forms.models import modelformset_factory, inlineformset_factory
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponseForbidden
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.auth.decorators import login_required

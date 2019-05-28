@@ -19,7 +19,7 @@ import logging
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template.context_processors import csrf
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils import translation
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
@@ -28,7 +28,7 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User as Django_User, User
-from django.contrib.auth.views import login as django_loginview
+from django.contrib.auth.views import LoginView as django_loginview
 from django.contrib import messages
 from django.views.generic import (
     RedirectView,

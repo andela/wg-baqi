@@ -18,7 +18,7 @@ import json
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from wger.core.models import Language
 from wger.core.tests import api_base_test

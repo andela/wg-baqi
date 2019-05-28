@@ -26,7 +26,7 @@ from django.forms import (
     ModelMultipleChoiceField
 )
 from django.core.cache import cache
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required
 from django.contrib import messages

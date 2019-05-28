@@ -23,7 +23,7 @@ from django.contrib.auth.models import (
     Group,
     User
 )
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.http.response import (
     HttpResponseForbidden,
     HttpResponse,

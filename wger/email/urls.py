@@ -32,5 +32,5 @@ patterns_email = [
 
 
 urlpatterns = [
-    url(r'^email/', include(patterns_email, namespace="email")),
+    url(r'^email/', include((patterns_email, "email"), namespace="email")),
 ]

@@ -103,6 +103,12 @@ BOWER_INSTALLED_APPS = (
     'sortablejs#1.4.x',
 )
 
+MIDDLEWARE = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware'
+)
+
 
 MIDDLEWARE_CLASSES = (
     'corsheaders.middleware.CorsMiddleware',
@@ -168,6 +174,8 @@ TEMPLATES = [
     },
 ]
 
+TEMPLATE_LOADERS = TEMPLATES[0]['OPTIONS']['loaders']
+
 # Store the user messages in the session
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
@@ -210,7 +218,7 @@ USE_L10N = True
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = None
+TIME_ZONE = "Africa/Nairobi"
 
 # Restrict the available languages
 LANGUAGES = (
@@ -339,7 +347,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoObjectPermissionsFilter',
                                 'rest_framework.filters.OrderingFilter',)
 }
 

@@ -19,8 +19,8 @@ import logging
 import tempfile
 import shutil
 
-from django.core.urlresolvers import reverse
-from django.core.urlresolvers import NoReverseMatch
+from django.urls import reverse
+from django.urls import NoReverseMatch
 from django.core.cache import cache
 from django.conf import settings
 from django.test import TestCase

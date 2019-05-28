@@ -15,7 +15,7 @@
 import datetime
 
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from wger.core.tests.base_testcase import WorkoutManagerTestCase
 from wger.utils.helpers import next_weekday, make_token

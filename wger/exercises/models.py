@@ -28,7 +28,7 @@ from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils import translation
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core import mail
 from django.core.cache import cache
 from django.core.validators import MinLengthValidator
@@ -164,7 +164,7 @@ class Exercise(AbstractSubmissionModel, AbstractLicenseModel, models.Model):
     '''Custom manager'''
 
     category = models.ForeignKey(ExerciseCategory,
-                                 verbose_name=_('Category'))
+                                 verbose_name=_('Category'), on_delete=models.CASCADE)
     description = models.TextField(max_length=2000,
                                    verbose_name=_('Description'),
                                    validators=[MinLengthValidator(40)])
@@ -202,7 +202,7 @@ class Exercise(AbstractSubmissionModel, AbstractLicenseModel, models.Model):
     '''The submission date'''
 
     language = models.ForeignKey(Language,
-                                 verbose_name=_('Language'))
+                                 verbose_name=_('Language'), on_delete=models.CASCADE)
     '''The exercise's language'''
 
     uuid = models.CharField(verbose_name='UUID',
@@ -360,7 +360,7 @@ class ExerciseImage(AbstractSubmissionModel, AbstractLicenseModel, models.Model)
     '''Custom manager'''
 
     exercise = models.ForeignKey(Exercise,
-                                 verbose_name=_('Exercise'))
+                                 verbose_name=_('Exercise'), on_delete=models.CASCADE)
     '''The exercise the image belongs to'''
 
     image = models.ImageField(verbose_name=_('Image'),
@@ -471,7 +471,7 @@ class ExerciseComment(models.Model):
     '''
     exercise = models.ForeignKey(Exercise,
                                  verbose_name=_('Exercise'),
-                                 editable=False)
+                                 editable=False, on_delete=models.CASCADE)
     comment = models.CharField(max_length=200,
                                verbose_name=_('Comment'),
                                help_text=_('A comment about how to correctly do this exercise.'))

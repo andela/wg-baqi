@@ -20,7 +20,7 @@ import decimal
 from django.db import models
 from django.db.models import IntegerField
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.encoding import python_2_unicode_compatible
@@ -104,7 +104,7 @@ class UserProfile(models.Model):
     )
 
     user = models.OneToOneField(User,
-                                editable=False)
+                                editable=False, on_delete=models.CASCADE)
     '''
     The user
     '''
@@ -112,7 +112,7 @@ class UserProfile(models.Model):
     gym = models.ForeignKey(Gym,
                             editable=False,
                             null=True,
-                            blank=True)
+                            blank=True, on_delete=models.CASCADE)
     '''
     The gym this user belongs to, if any
     '''
@@ -179,7 +179,7 @@ by the US Department of Agriculture. It is extremely complete, with around
                                                           'notifications, e.g. email reminders for '
                                                           'workouts. This does not affect the '
                                                           'language used on the website.'),
-                                              default=2)
+                                              default=2, on_delete=models.CASCADE)
 
     timer_active = models.BooleanField(verbose_name=_('Use pauses in workout timer'),
                                        help_text=_('Check to activate timer pauses between '
@@ -479,7 +479,7 @@ class UserCache(models.Model):
     A table used to cache expensive queries or similar
     '''
 
-    user = models.OneToOneField(User, editable=False)
+    user = models.OneToOneField(User, editable=False, on_delete=models.CASCADE)
     '''
     The user
     '''

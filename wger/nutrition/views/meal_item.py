@@ -17,7 +17,7 @@ import logging
 
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponseForbidden
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy
 from django.views.generic import CreateView, UpdateView

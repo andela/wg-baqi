@@ -16,13 +16,12 @@
 
 
 from django.conf.urls import (
-    patterns,
     url,
     include
 )
 from django.views.generic import TemplateView
 from django.contrib.auth import views
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 from wger.core.views import (
     user,
@@ -100,27 +99,27 @@ patterns_user = [
     # Password reset is implemented by Django, no need to cook our own soup here
     # (besides the templates)
     url(r'^password/change$',
-        views.password_change,
+        views.PasswordChangeView,
         {'template_name': 'user/change_password.html',
           'post_change_redirect': reverse_lazy('core:user:preferences')},
         name='change-password'),
     url(r'^password/reset/$',
-        views.password_reset,
+        views.PasswordResetView,
         {'template_name': 'user/password_reset_form.html',
          'email_template_name': 'user/password_reset_email.html',
          'post_reset_redirect': reverse_lazy('core:user:password_reset_done')},
         name='password_reset'),
     url(r'^password/reset/done/$',
-        views.password_reset_done,
+        views.PasswordResetDoneView,
         {'template_name': 'user/password_reset_done.html'},
         name='password_reset_done'),
     url(r'^password/reset/check/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})$',
-        views.password_reset_confirm,
+        views.PasswordResetConfirmView,
         {'template_name': 'user/password_reset_confirm.html',
          'post_reset_redirect': reverse_lazy('core:user:password_reset_complete')},
         name='password_reset_confirm'),
     url(r'^password/reset/complete/$',
-        views.password_reset_complete,
+        views.PasswordResetCompleteView,
         {'template_name': 'user/password_reset_complete.html'},
         name='password_reset_complete'),
 ]
@@ -201,9 +200,9 @@ urlpatterns = [
         misc.FeedbackClass.as_view(),
         name='feedback'),
 
-    url(r'^language/', include(patterns_language, namespace="language")),
-    url(r'^user/', include(patterns_user, namespace="user")),
-    url(r'^license/', include(patterns_license, namespace="license")),
-    url(r'^repetition-unit/', include(patterns_repetition_units, namespace="repetition-unit")),
-    url(r'^weight-unit/', include(patterns_weight_units, namespace="weight-unit")),
+    url(r'^language/', include((patterns_language, "language"), namespace="language")),
+    url(r'^user/', include((patterns_user, "user"), namespace="user")),
+    url(r'^license/', include((patterns_license, "license"), namespace="license")),
+    url(r'^repetition-unit/', include((patterns_repetition_units, "repetition-unit"), namespace="repetition-unit")),
+    url(r'^weight-unit/', include((patterns_weight_units, "weight-unit"), namespace="weight-unit")),
 ]
