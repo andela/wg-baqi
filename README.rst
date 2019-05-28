@@ -66,12 +66,12 @@ Then install the python packages from pypi in the virtualenv::
  $ git clone https://github.com/wger-project/wger.git
  $ cd wger
  $ pip install -r requirements.txt  # or requirements_devel.txt to develop
- $ invoke create_settings \
+ $ invoke create-settings \
           --settings-path /home/wger/wger/settings.py \
           --database-path /home/wger/wger/database.sqlite
- $ invoke bootstrap_wger \
+ $ invoke bootstrap-wger \
           --settings-path /home/wger/wger/settings.py \
-          --no-start-server
+          --no-start-server  # you might need to run this twice
  $ python manage.py runserver
 
 3) Log in as: **admin**, password **admin**
