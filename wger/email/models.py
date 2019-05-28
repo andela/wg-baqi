@@ -39,10 +39,10 @@ class Log(models.Model):
     The user that created the email
     '''
 
-    gym = models.ForeignKey(Gym,
-                            editable=False,
-                            related_name='email_log'
-                            , on_delete=models.CASCADE)
+    gym = models.ForeignKey(
+        Gym,
+        editable=False,
+        related_name='email_log', on_delete=models.CASCADE)
     '''
     Gym this log belongs to
     '''

@@ -89,8 +89,9 @@ def search(request):
     json_response = {}
 
     if q:
-        languages = load_item_languages(LanguageConfig.SHOW_ITEM_EXERCISES,
-                                        language_code=request.GET.get('language', None))
+        languages = load_item_languages(
+            LanguageConfig.SHOW_ITEM_EXERCISES,
+            language_code=request.GET.get('language', None))
         exercises = (Exercise.objects.filter(name__icontains=q)
                      .filter(language__in=languages)
                      .filter(status=Exercise.STATUS_ACCEPTED)

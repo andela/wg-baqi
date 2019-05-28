@@ -36,6 +36,7 @@ class PlanRepresentationTestCase(WorkoutManagerTestCase):
 
         p.description = ''
         p.save()
+        # self.assertEqual("{0}".format(p), 'Nutrition plan')
 
 
 class PlanShareButtonTestCase(WorkoutManagerTestCase):
@@ -126,6 +127,7 @@ class PlanDailyCaloriesTestCase(WorkoutManagerTestCase):
     '''
     Tests the handling of the daily calories in the plan page
     '''
+
     def test_overview_no_calories(self):
         '''
         Tests the overview page with no daily calories set
@@ -134,7 +136,8 @@ class PlanDailyCaloriesTestCase(WorkoutManagerTestCase):
         self.user_login('test')
 
         # Can't find goal calories text
-        response = self.client.get(reverse('nutrition:plan:view', kwargs={'id': 1}))
+        response = self.client.get(
+            reverse('nutrition:plan:view', kwargs={'id': 1}))
         self.assertFalse(response.context['plan'].has_goal_calories)
 
         self.assertEqual(response.status_code, 200)
@@ -152,9 +155,11 @@ class PlanDailyCaloriesTestCase(WorkoutManagerTestCase):
         plan.save()
 
         # Can find goal calories text
-        response = self.client.get(reverse('nutrition:plan:view', kwargs={'id': 1}))
+        response = self.client.get(reverse(
+            'nutrition:plan:view', kwargs={'id': 1}))
         self.assertTrue(response.context['plan'].has_goal_calories)
         self.assertEqual(response.status_code, 200)
+        # self.assertContains(response, 'goal amount of calories')
 
 
 class PlanApiTestCase(api_base_test.ApiBaseResourceTestCase):
