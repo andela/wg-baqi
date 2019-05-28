@@ -36,7 +36,7 @@ class WgerPermission(permissions.BasePermission):
         view. If it is not present, treat is as a public endpoint
         '''
         if hasattr(view, 'is_private') and view.is_private:
-            return request.user and request.user.is_authenticated()
+            return request.user and request.user.is_authenticated
         return True
 
     def has_object_permission(self, request, view, obj):
