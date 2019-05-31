@@ -17,7 +17,7 @@ import datetime
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 
 from wger.core.tests import api_base_test
 from wger.core.tests.base_testcase import WorkoutManagerAddTestCase

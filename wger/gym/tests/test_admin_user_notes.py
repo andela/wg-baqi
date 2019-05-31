@@ -12,7 +12,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 from wger.core.tests.base_testcase import WorkoutManagerAccessTestCase
 from wger.core.tests.base_testcase import WorkoutManagerAddTestCase

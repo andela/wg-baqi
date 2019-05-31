@@ -15,8 +15,8 @@
 import logging
 
 from django.core.cache import cache
-from django.core.urlresolvers import reverse
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse
+from django.urls import reverse_lazy
 
 from wger.core.tests import api_base_test
 from wger.core.tests.base_testcase import STATUS_CODES_FAIL

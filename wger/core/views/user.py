@@ -19,7 +19,7 @@ import logging
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template.context_processors import csrf
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils import translation
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
@@ -28,7 +28,7 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User as Django_User, User
-from django.contrib.auth.views import login as django_loginview
+from django.contrib.auth.views import LoginView as django_loginview
 from django.contrib import messages
 from django.views.generic import (
     RedirectView,
@@ -213,7 +213,7 @@ def registration(request):
         FormClass = RegistrationFormNoCaptcha
 
     # Redirect regular users, in case they reached the registration page
-    if request.user.is_authenticated() and not request.user.userprofile.is_temporary:
+    if request.user.is_authenticated and not request.user.userprofile.is_temporary:
         return HttpResponseRedirect(reverse('core:dashboard'))
 
     if request.method == 'POST':
@@ -323,7 +323,7 @@ class UserDeactivateView(LoginRequiredMixin,
         '''
         edit_user = get_object_or_404(User, pk=self.kwargs['pk'])
 
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return HttpResponseForbidden()
 
         if (request.user.has_perm('gym.manage_gym') or request.user.has_perm('gym.gym_trainer')) \
@@ -356,7 +356,7 @@ class UserActivateView(LoginRequiredMixin,
         '''
         edit_user = get_object_or_404(User, pk=self.kwargs['pk'])
 
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return HttpResponseForbidden()
 
         if (request.user.has_perm('gym.manage_gym') or request.user.has_perm('gym.gym_trainer')) \
@@ -394,7 +394,7 @@ class UserEditView(WgerFormMixin,
         - General managers can edit every member
         '''
         user = request.user
-        if not user.is_authenticated():
+        if not user.is_authenticated:
             return HttpResponseForbidden()
 
         if user.has_perm('gym.manage_gym') \
@@ -462,7 +462,7 @@ class UserDetailView(LoginRequiredMixin, WgerMultiplePermissionRequiredMixin, De
         '''
         user = request.user
 
-        if not user.is_authenticated():
+        if not user.is_authenticated:
             return HttpResponseForbidden()
 
         if (user.has_perm('gym.manage_gym') or user.has_perm('gym.gym_trainer')) \

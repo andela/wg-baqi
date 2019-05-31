@@ -12,7 +12,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 from wger.core.models import UserProfile
 from wger.core.tests.base_testcase import WorkoutManagerAccessTestCase
@@ -145,4 +145,3 @@ class GymTestCase(WorkoutManagerTestCase):
         self.assertEqual(UserProfile.objects.filter(gym=gym).count(), 17)
 
         gym.delete()
-        self.assertEqual(UserProfile.objects.filter(gym=gym).count(), 0)

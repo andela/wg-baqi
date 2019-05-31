@@ -20,7 +20,7 @@ import bleach
 from django.utils.translation import ugettext_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.template.context_processors import csrf
 from django.views.generic.edit import ModelFormMixin
 from django.views.generic import TemplateView
@@ -76,7 +76,7 @@ class WgerPermissionMixin(object):
         '''
 
         if self.login_required or self.permission_required:
-            if not request.user.is_authenticated():
+            if not request.user.is_authenticated:
                 return HttpResponseRedirect(reverse_lazy('core:user:login')
                                             + '?next={0}'.format(request.path))
 

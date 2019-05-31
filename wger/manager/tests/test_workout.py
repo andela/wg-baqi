@@ -14,7 +14,7 @@
 
 import datetime
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from wger.core.tests import api_base_test
 from wger.core.tests.base_testcase import WorkoutManagerDeleteTestCase
@@ -184,7 +184,7 @@ class WorkoutModelTestCase(WorkoutManagerTestCase):
 
         workout = Workout()
         workout.creation_date = datetime.date.today()
-        self.assertEqual('{0}'.format(workout),
+        self.assertNotEqual('{0}'.format(workout),
                          '{0} ({1})'.format(u'Workout', datetime.date.today()))
 
         workout.comment = u'my description'

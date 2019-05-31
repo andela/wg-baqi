@@ -1,3 +1,9 @@
+.. image:: https://travis-ci.com/andela/wg-baqi.svg?branch=develop
+    :target: https://travis-ci.com/andela/wg-baqi
+
+.. image:: https://coveralls.io/repos/github/andela/wg-baqi/badge.svg?branch=develop
+    :target: https://coveralls.io/github/andela/wg-baqi?branch=develop
+
 Thank you for downloading wger Workout Manager. wger (ˈvɛɡɐ) is a free, open source web
 application that manages your exercises and personal workouts, weight and diet
 plans. It can also be used as a simple gym management utility, providing different
@@ -66,12 +72,12 @@ Then install the python packages from pypi in the virtualenv::
  $ git clone https://github.com/wger-project/wger.git
  $ cd wger
  $ pip install -r requirements.txt  # or requirements_devel.txt to develop
- $ invoke create_settings \
+ $ invoke create-settings \
           --settings-path /home/wger/wger/settings.py \
           --database-path /home/wger/wger/database.sqlite
- $ invoke bootstrap_wger \
+ $ invoke bootstrap-wger \
           --settings-path /home/wger/wger/settings.py \
-          --no-start-server
+          --no-start-server  # you might need to run this twice
  $ python manage.py runserver
 
 3) Log in as: **admin**, password **admin**

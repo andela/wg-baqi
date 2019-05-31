@@ -17,7 +17,7 @@
 import logging
 
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http.response import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy, ugettext as _
@@ -57,7 +57,7 @@ class AddView(WgerFormMixin, LoginRequiredMixin, PermissionRequiredMixin, Create
         '''
         Can only add contract types in own gym
         '''
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return HttpResponseForbidden()
 
         if request.user.userprofile.gym_id != int(self.kwargs['gym_pk']):
@@ -96,7 +96,7 @@ class UpdateView(WgerFormMixin, LoginRequiredMixin, PermissionRequiredMixin, Upd
         '''
         Can only add contract types in own gym
         '''
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return HttpResponseForbidden()
 
         contract_type = self.get_object()
@@ -134,7 +134,7 @@ class DeleteView(WgerDeleteMixin, LoginRequiredMixin, PermissionRequiredMixin, D
         '''
         Can only add contract types in own gym
         '''
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return HttpResponseForbidden()
 
         contract_type = self.get_object()
@@ -177,7 +177,7 @@ class ListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         '''
         Can only list contract types in own gym
         '''
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return HttpResponseForbidden()
 
         self.gym = get_object_or_404(Gym, id=self.kwargs['gym_pk'])

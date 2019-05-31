@@ -26,7 +26,7 @@ from django.forms import (
     ModelMultipleChoiceField
 )
 from django.core.cache import cache
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
@@ -139,7 +139,7 @@ def view(request, id, slug=None):
     # rendering in the D3 chart
     entry_log = []
     chart_data = []
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         logs = WorkoutLog.objects.filter(user=request.user, exercise=exercise)
         entry_log, chart_data = process_log_entries(logs)
 
@@ -248,7 +248,7 @@ class ExerciseCorrectView(ExercisesEditAddView, LoginRequiredMixin, UpdateView):
         '''
         Only registered users can correct exercises
         '''
-        if not request.user.is_authenticated() or request.user.userprofile.is_temporary:
+        if not request.user.is_authenticated or request.user.userprofile.is_temporary:
             return HttpResponseForbidden()
 
         return super(ExerciseCorrectView, self).dispatch(request, *args, **kwargs)

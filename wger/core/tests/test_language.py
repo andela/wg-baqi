@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 from wger.core.models import Language
 from wger.core.tests import api_base_test

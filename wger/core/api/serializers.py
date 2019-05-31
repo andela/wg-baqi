@@ -32,6 +32,7 @@ class UserprofileSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = UserProfile
+        fields = '__all__'
 
 
 class UsernameSerializer(serializers.Serializer):
@@ -47,6 +48,7 @@ class LanguageSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = Language
+        fields = '__all__'
 
 
 class DaysOfWeekSerializer(serializers.ModelSerializer):
@@ -55,6 +57,7 @@ class DaysOfWeekSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = DaysOfWeek
+        fields = '__all__'
 
 
 class LicenseSerializer(serializers.ModelSerializer):
@@ -63,6 +66,7 @@ class LicenseSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = License
+        fields = '__all__'
 
 
 class RepetitionUnitSerializer(serializers.ModelSerializer):
@@ -71,6 +75,7 @@ class RepetitionUnitSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = RepetitionUnit
+        fields = '__all__'
 
 
 class WeightUnitSerializer(serializers.ModelSerializer):
@@ -79,3 +84,4 @@ class WeightUnitSerializer(serializers.ModelSerializer):
     '''
     class Meta:
         model = WeightUnit
+        fields = '__all__'

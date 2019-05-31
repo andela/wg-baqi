@@ -17,7 +17,7 @@
 import logging
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.db import models
 from django.forms import ModelForm, ModelChoiceField

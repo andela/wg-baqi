@@ -17,7 +17,7 @@ import json
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from wger.core.models import UserProfile
 from wger.core.tests.base_testcase import WorkoutManagerTestCase

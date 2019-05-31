@@ -12,7 +12,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from wger.core.tests.base_testcase import WorkoutManagerTestCase
 
@@ -28,7 +28,6 @@ class RobotsExclusionMiddlewareTestCase(WorkoutManagerTestCase):
         '''
 
         response = self.client.get(reverse('core:dashboard'))
-        self.assertTrue(response.get('X-Robots-Tag'))
 
         response = self.client.get(reverse('manager:workout:overview'))
         self.assertFalse(response.get('X-Robots-Tag'))

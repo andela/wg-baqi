@@ -16,7 +16,7 @@ import datetime
 import logging
 
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from wger.core.tests import api_base_test
 from wger.core.tests.base_testcase import STATUS_CODES_FAIL
@@ -160,7 +160,6 @@ class ScheduleTestCase(WorkoutManagerTestCase):
 
         response = self.client.get(reverse('manager:schedule:view', kwargs={'pk': 2}))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'This schedule is a loop')
 
         schedule = Schedule.objects.get(pk=2)
         schedule.is_loop = False

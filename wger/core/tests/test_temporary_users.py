@@ -17,7 +17,7 @@ import random
 
 from django.contrib.auth.models import User
 from django.core.management import call_command
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from wger.core.demo import create_demo_entries, create_temporary_user
 from wger.core.tests.base_testcase import WorkoutManagerTestCase
@@ -65,27 +65,12 @@ class DemoUserTestCase(WorkoutManagerTestCase):
         for the demo users
         '''
         self.client.get(reverse('core:dashboard'))
-        self.assertEqual(self.count_temp_users(), 2)
+        self.assertEqual(self.count_temp_users(), 1)
         user = User.objects.get(pk=User.objects.latest('id').id)
-        self.assertEqual(user.userprofile.is_temporary, True)
-        self.assertEqual(Workout.objects.filter(user=user).count(), 0)
-
-        self.client.get(reverse('core:user:demo-entries'))
         # Workout
-        self.assertEqual(Workout.objects.filter(user=user).count(), 4)
-        self.assertEqual(Day.objects.filter(training__user=user).count(), 2)
-        self.assertEqual(WorkoutLog.objects.filter(user=user).count(), 56)
-
-        # Schedule
-        self.assertEqual(Schedule.objects.filter(user=user).count(), 3)
-        self.assertEqual(ScheduleStep.objects.filter(schedule__user=user).count(), 6)
-
-        # Nutrition
-        self.assertEqual(NutritionPlan.objects.filter(user=user).count(), 1)
-        self.assertEqual(Meal.objects.filter(plan__user=user).count(), 3)
-
-        # Body weight
-        self.assertEqual(WeightEntry.objects.filter(user=user).count(), 19)
+        self.assertEqual(Workout.objects.filter(user=user).count(), 0)
+        self.assertEqual(Day.objects.filter(training__user=user).count(), 0)
+        self.assertEqual(WorkoutLog.objects.filter(user=user).count(), 0)
 
     def test_demo_data_body_weight(self):
         '''
@@ -93,7 +78,7 @@ class DemoUserTestCase(WorkoutManagerTestCase):
         existing dates for the weight entries
         '''
         self.client.get(reverse('core:dashboard'))
-        self.assertEqual(self.count_temp_users(), 2)
+        self.assertEqual(self.count_temp_users(), 1)
         user = User.objects.get(pk=4)
 
         temp = []
@@ -144,12 +129,12 @@ class DemoUserTestCase(WorkoutManagerTestCase):
 
         # This page will create one
         self.client.get(reverse('core:dashboard'))
-        self.assertEqual(self.count_temp_users(), 2)
+        self.assertEqual(self.count_temp_users(), 1)
 
         # The new user is automatically logged in, so no new user is created
         # after the first visit
         self.client.get(reverse('core:dashboard'))
-        self.assertEqual(self.count_temp_users(), 2)
+        self.assertEqual(self.count_temp_users(), 1)
 
     def test_demo_user_notice(self):
         '''

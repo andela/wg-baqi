@@ -207,7 +207,7 @@ class SpacelessNode(template.base.Node):
     def __init__(self, nodelist):
         self.nodelist = nodelist
 
-    def render(self, context):
+    def render(self, context, renderer=None):
         if settings.WGER_SETTINGS['REMOVE_WHITESPACE']:
             from django.utils.html import strip_spaces_between_tags
             return strip_spaces_between_tags(self.nodelist.render(context).strip())

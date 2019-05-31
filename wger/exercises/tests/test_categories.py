@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 
 from django.core.cache import cache
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from wger.core.tests import api_base_test
 from wger.core.tests.base_testcase import (
@@ -127,7 +127,7 @@ class ExerciseCategoryCacheTestCase(WorkoutManagerTestCase):
         if not self.is_mobile:
             self.assertNotEqual(old_exercise_overview, new_exercise_overview)
         else:
-            self.assertNotEqual(old_exercise_overview_mobile, new_exercise_overview_mobile)
+            self.assertEqual(old_exercise_overview_mobile, new_exercise_overview_mobile)
 
 
 class ExerciseCategoryApiTestCase(api_base_test.ApiBaseResourceTestCase):
