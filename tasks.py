@@ -142,10 +142,10 @@ def create_settings(context, settings_path=None, database_path=None, url=None, d
     # The environment variable is set by travis during testing
     if database_type == 'postgresql':
         dbengine = 'postgresql_psycopg2'
-        dbname = "'test_wger'"
-        dbuser = 'postgres'
-        dbpassword = ''
-        dbhost = '127.0.0.1'
+        dbname = os.getenv('NAME')
+        dbuser = os.getenv('USER')
+        dbpassword = os.getenv('PASS')
+        dbhost = os.getenv('HOST')
         dbport = ''
     elif database_type == 'sqlite3':
         dbengine = 'sqlite3'
@@ -153,6 +153,8 @@ def create_settings(context, settings_path=None, database_path=None, url=None, d
         dbuser = ''
         dbpassword = ''
         dbhost = ''
+        
+
         dbport = ''
 
     # Create a random SECRET_KEY to put it in the settings.
