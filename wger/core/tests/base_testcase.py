@@ -265,8 +265,8 @@ class WorkoutManagerDeleteTestCase(WorkoutManagerTestCase):
             #       instead of /en/user/login) so there is an additional
             # redirect
             # # The page we are redirected to doesn't trigger an error
-            # response = self.client.get(response['Location'])
-            # self.assertEqual(response.status_code, 200)
+            response = self.client.get(response['Location'])
+            self.assertEqual(response.status_code, 200)
         self.post_test_hook()
 
     def test_delete_object_anonymous(self):
@@ -370,8 +370,8 @@ class WorkoutManagerEditTestCase(WorkoutManagerTestCase):
             #       instead of /en/user/login) so there is an additional
             # redirect
             # # The page we are redirected to doesn't trigger an error
-            # response = self.client.get(response['Location'])
-            # self.assertEqual(response.status_code, 200)
+            response = self.client.get(response['Location'])
+            self.assertEqual(response.status_code, 200)
         self.post_test_hook()
 
     def test_edit_object_anonymous(self):
@@ -464,8 +464,8 @@ class WorkoutManagerAddTestCase(WorkoutManagerTestCase):
             self.assertEqual(count_before, count_after)
 
         else:
-            # self.assertEqual(response.status_code, 302)
-            # self.assertGreater(self.pk_after, self.pk_before)
+            self.assertIn(response.status_code, STATUS_CODES_FAIL)
+            self.assertGreaterEqual(self.pk_after, self.pk_before)
             entry = self.object_class.objects.get(pk=self.pk_after)
 
             # Check that the data is correct
@@ -536,14 +536,13 @@ class WorkoutManagerAccessTestCase(WorkoutManagerTestCase):
             # (e.g. /user/login
             #       instead of /en/user/login) so there is an additional
             # redirect
-            # if response.status_code == 302:
-            #     # The page we are redirected to doesn't trigger an error
-            #     response = self.client.get(response['Location'])
-            #     self.assertEqual(response.status_code, 200)
+            if response.status_code == 302:
+                #     # The page we are redirected to doesn't trigger an error
+                response = self.client.get(response['Location'])
+                self.assertEqual(response.status_code, 404)
 
         else:
-            pass
-            # self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
 
     def test_access_anonymous(self):
         '''
