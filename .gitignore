@@ -9,6 +9,9 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+
+venv/
+venv-django/
 build/
 develop-eggs/
 dist/
@@ -47,7 +50,7 @@ coverage.xml
 
 # Django stuff:
 *.log
-settings*.py
+
 *.sqlite
 /CACHE
 

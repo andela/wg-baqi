@@ -13,33 +13,33 @@ ADMINS = (
 MANAGERS = ADMINS
 
 
-DATABASES = {{
-    'default': {{
-        'ENGINE': 'django.db.backends.{dbengine}',
-        'NAME': '{dbname}',
-        'USER': '{dbuser}',
-        'PASSWORD': '{dbpassword}',
-        'HOST': '{dbhost}',
-        'PORT': '{dbport}',
-    }}
-}}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('NAME'),
+        'USER': os.getenv('USER'),
+        'PASSWORD': os.getenv('PASS'),
+        'HOST': os.getenv('HOST'),
+        'PORT': ''
+    }
+}
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '{default_key}'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # Your reCaptcha keys
-RECAPTCHA_PUBLIC_KEY = '6Lf6HKYUAAAAAK_Ju5QDfl7Lu3EhgZN2VeS2hh00'
-RECAPTCHA_PRIVATE_KEY = '6Lf6HKYUAAAAAK_Ju5QDfl7Lu3EhgZN2VeS2hh00'
+RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_PUBLIC_KEY')
+RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_PRIVATE_KEY')
 NOCAPTCHA = True
 
 # The site's URL (e.g. http://www.my-local-gym.com or http://localhost:8000)
 # This is needed for uploaded files and images (exercise images, etc.) to be
 # properly served.
-SITE_URL = '{siteurl}'
+SITE_URL = 'http://localhost:8000'
 
 # Path to uploaded files
 # Absolute filesystem path to the directory that will hold user-uploaded files.
-MEDIA_ROOT = {media_folder_path}
+MEDIA_ROOT = '/Users/dheemonk/.local/share/wger/media'
 MEDIA_URL = '/media/'
 
 # Allow all hosts to access the application. Change if used in production.
