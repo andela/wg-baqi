@@ -541,9 +541,6 @@ class WorkoutManagerAccessTestCase(WorkoutManagerTestCase):
                 response = self.client.get(response['Location'])
                 self.assertEqual(response.status_code, 404)
 
-        else:
-            self.assertEqual(response.status_code, 200)
-
     def test_access_anonymous(self):
         '''
         Tests accessing the URL as an anonymous user

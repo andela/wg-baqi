@@ -40,7 +40,6 @@ from django.views.generic import (
     CreateView,
     UpdateView
 )
-
 from wger.manager.models import WorkoutLog
 from wger.exercises.models import (
     Exercise,

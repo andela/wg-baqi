@@ -267,7 +267,7 @@ class ExercisesTestCase(WorkoutManagerTestCase):
         self.add_exercise_user_fail()
         self.user_logout()
 
-    def add_exercise_success(self, admin=False):
+    def add_exercise_success(self, admin=True):
         '''
         Tests adding/editing an exercise with a user with enough rights to do
         this
