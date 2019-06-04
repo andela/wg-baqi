@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 
-from captcha.fields import ReCaptchaField
+from snowpenguin.django.recaptcha2.fields import ReCaptchaField
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -28,7 +28,7 @@ from django.forms import (
 )
 from django.utils.translation import ugettext as _
 from wger.core.models import UserProfile
-from captcha.widgets import ReCaptchaV2Invisible
+from snowpenguin.django.recaptcha2.widgets import ReCaptchaHiddenInput
 
 
 class UserLoginForm(AuthenticationForm):
@@ -57,9 +57,11 @@ class UserPreferencesForm(forms.ModelForm):
 
 
 class UserEmailForm(forms.ModelForm):
-    email = EmailField(label=_("Email"),
-                       help_text=_("Used for password resets and, optionally, email reminders."),
-                       required=False)
+    email = EmailField(
+        label=_("Email"),
+        help_text=_("Used for password resets and, optionally, email \
+                    reminders."),
+        required=False)
 
     class Meta:
         model = User
@@ -70,8 +72,10 @@ class UserEmailForm(forms.ModelForm):
         Email must be unique system wide
 
         However, this check should only be performed when the user changes his
-        email, otherwise the uniqueness check will because it will find one user
-        (the current one) using the same email. Only when the user changes it, do
+        email, otherwise the uniqueness check will because it will find one
+        user
+        (the current one) using the same email. Only when the user changes it,
+        do
         we want to check that nobody else has that email
         '''
 
@@ -131,9 +135,10 @@ class RegistrationForm(UserCreationForm, UserEmailForm):
 
     # Manually set the language to 'en', otherwise the language used seems to
     # randomly one of the application languages. This also appears to happen
-    # only on wger.de, perhaps because there the application is behind a reverse
+    # only on wger.de, perhaps because there the application is behind a
+    # reverse
     # proxy. See  #281.
-    captcha = ReCaptchaField(ReCaptchaV2Invisible)
+    captcha = ReCaptchaField(widget=ReCaptchaHiddenInput())
 
 
 class RegistrationFormNoCaptcha(UserCreationForm, UserEmailForm):
@@ -151,11 +156,12 @@ class FeedbackRegisteredForm(forms.Form):
     '''
     Feedback form used for logged in users
     '''
-    contact = forms.CharField(max_length=50,
-                              min_length=10,
-                              label=_('Contact'),
-                              help_text=_('Some way of answering you (email, etc.)'),
-                              required=False)
+    contact = forms.CharField(
+        max_length=50,
+        min_length=10,
+        label=_('Contact'),
+        help_text=_('Some way of answering you (email, etc.)'),
+        required=False)
 
     comment = forms.CharField(max_length=500,
                               min_length=10,
@@ -169,4 +175,4 @@ class FeedbackAnonymousForm(FeedbackRegisteredForm):
     '''
     Feedback form used for anonymous users (has additionally a reCaptcha field)
     '''
-    captcha = ReCaptchaField(ReCaptchaV2Invisible)
+    captcha = ReCaptchaField(widget=ReCaptchaHiddenInput())

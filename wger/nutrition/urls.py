@@ -52,7 +52,7 @@ patterns_plan = [
     url(r'^(?P<pk>\d+)/edit/$',
         login_required(plan.PlanEditView.as_view()),
         name='edit'),
-    url(r'^(?P<id>\d+)/pdf/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})$',
+    url(r'^(?P<id>\d+)/pdf/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})$',  # noqa
         plan.export_pdf,
         name='export-pdf'),
     url(r'^(?P<id>\d+)/pdf/$',
@@ -181,12 +181,18 @@ patterns_calories = [
 
 
 urlpatterns = [
-   url(r'^', include((patterns_plan, "plan"), namespace="plan")),
-   url(r'^meal/', include((patterns_meal, "meal"), namespace="meal")),
-   url(r'^meal/item/', include((patterns_meal_item, "meal_item"), namespace="meal_item")),
-   url(r'^ingredient/', include((patterns_ingredient, "ingredient"), namespace="ingredient")),
-   url(r'^unit/', include((patterns_weight_unit, "weight_unit"), namespace="weight_unit")),
-   url(r'^unit-to-ingredient/', include((patterns_unit_ingredient, "unit_ingredient"), namespace="unit_ingredient")),
-   url(r'^calculator/bmi/', include((patterns_bmi, "bmi"), namespace="bmi")),
-   url(r'^calculator/calories/', include((patterns_calories, "calories"), namespace="calories")),
+    url(r'^', include((patterns_plan, "plan"), namespace="plan")),
+    url(r'^meal/', include((patterns_meal, "meal"), namespace="meal")),
+    url(r'^meal/item/', include(
+       (patterns_meal_item, "meal_item"), namespace="meal_item")),
+    url(r'^ingredient/', include(
+       (patterns_ingredient, "ingredient"), namespace="ingredient")),
+    url(r'^unit/', include(
+       (patterns_weight_unit, "weight_unit"), namespace="weight_unit")),
+    url(r'^unit-to-ingredient/', include(
+       (patterns_unit_ingredient, "unit_ingredient"),
+        namespace="unit_ingredient")),
+    url(r'^calculator/bmi/', include((patterns_bmi, "bmi"), namespace="bmi")),
+    url(r'^calculator/calories/', include(
+        (patterns_calories, "calories"), namespace="calories")),
 ]

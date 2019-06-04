@@ -18,10 +18,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='WeightEntry',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField(verbose_name='Date')),
-                ('weight', models.DecimalField(decimal_places=2, max_digits=5, validators=[django.core.validators.MinValueValidator(30), django.core.validators.MaxValueValidator(600)], verbose_name='Weight')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                ('weight', models.DecimalField(
+                    decimal_places=2, max_digits=5,
+                    validators=[django.core.validators.MinValueValidator(30),
+                                django.core.validators.MaxValueValidator(600)
+                                ], verbose_name='Weight')),
+                ('user', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
             options={
                 'verbose_name': 'Weight entry',

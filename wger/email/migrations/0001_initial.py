@@ -18,12 +18,20 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Log',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField(auto_now=True)),
                 ('subject', models.CharField(max_length=100)),
                 ('body', models.TextField()),
-                ('gym', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.CASCADE, related_name='email_log', to='gym.Gym')),
-                ('user', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('gym', models.ForeignKey(
+                    editable=False,
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='email_log', to='gym.Gym')),
+                ('user', models.ForeignKey(
+                    editable=False,
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'ordering': ['-date'],
@@ -32,9 +40,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CronEntry',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True, serialize=False, verbose_name='ID')),
                 ('email', models.EmailField(max_length=254)),
-                ('log', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.CASCADE, to='email.Log')),
+                ('log', models.ForeignKey(
+                    editable=False,
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to='email.Log')),
             ],
         ),
     ]

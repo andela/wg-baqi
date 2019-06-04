@@ -104,7 +104,8 @@ class ExerciseAjaxSelect(SelectMultiple):
             value = []
 
         output = [u'<div>']
-        output.append(u'<input type="text" id="exercise-search" class="form-control">')
+        output.append(
+            u'<input type="text" id="exercise-search" class="form-control">')
         output.append(u'</div>')
 
         output.append('<div id="exercise-search-log">')
@@ -120,7 +121,9 @@ class ExerciseAjaxSelect(SelectMultiple):
         selected_choices = set(force_text(v) for v in selected_choices)
         output = []
         for option_value, option_label in chain(self.choices, choices):
-            output.append(self.render_option(selected_choices, option_value, option_label))
+            output.append(
+                self.render_option(
+                    selected_choices, option_value, option_label))
         return u'\n'.join(output)
 
     def render_option(self, selected_choices, option_value, option_label):
@@ -156,7 +159,9 @@ class CheckboxChoiceInputTranslated(CheckboxInput):
     def __init__(self, name, value, attrs, choice, index):
         choice = (choice[0], _(choice[1]))
 
-        super(CheckboxChoiceInputTranslated, self).__init__(name, value, attrs, choice, index)
+        super(
+            CheckboxChoiceInputTranslated,
+            self).__init__(name, value, attrs, choice, index)
 
 
 class CheckboxChoiceInputTranslatedOriginal(CheckboxInput):
@@ -194,7 +199,8 @@ class CheckboxBootstrapRenderer(CheckboxFieldRendererTranslated):
     inner_html = u'<div class="checkbox">{choice_value}{sub_widgets}</div>'
 
 
-class CheckboxBootstrapRendererTranslatedOriginal(CheckboxFieldRendererTranslatedOriginal):
+class CheckboxBootstrapRendererTranslatedOriginal(
+        CheckboxFieldRendererTranslatedOriginal):
     outer_html = u'<div{id_attr}>{content}</div>'
     inner_html = u'<div class="checkbox">{choice_value}{sub_widgets}</div>'
 
@@ -214,7 +220,8 @@ class TranslatedSelectMultiple(BootstrapSelectMultiple):
     pass
 
 
-class TranslatedOriginalSelectMultiple(BootstrapSelectMultipleTranslatedOriginal):
+class TranslatedOriginalSelectMultiple(
+        BootstrapSelectMultipleTranslatedOriginal):
     '''
     A SelectMultiple widget that translates the options, showing the original
     string as well. This is currently only used in the muscle list, where the

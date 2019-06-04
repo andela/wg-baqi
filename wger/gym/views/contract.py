@@ -16,7 +16,8 @@
 import logging
 
 from django.urls import reverse
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.contrib.auth.mixins import (
+    PermissionRequiredMixin, LoginRequiredMixin)
 from django.contrib.auth.models import User
 from django.http.response import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
@@ -30,12 +31,13 @@ from django.views.generic import (
 )
 
 from wger.utils.generic_views import WgerFormMixin
-from wger.gym.models import Contract, Gym
+from wger.gym.models import Contract
 
 logger = logging.getLogger(__name__)
 
 
-class AddView(WgerFormMixin, LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class AddView(WgerFormMixin, LoginRequiredMixin,
+              PermissionRequiredMixin, CreateView):
     '''
     View to add a new contract
     '''
@@ -50,7 +52,8 @@ class AddView(WgerFormMixin, LoginRequiredMixin, PermissionRequiredMixin, Create
         '''
         Get the initial data for new contracts
 
-        Since the user's data probably didn't change between one contract and the
+        Since the user's data probably didn't change between one contract and
+        the
         next, try to fill in as much data as possible from previous ones or the
         user's profile
         '''
@@ -97,8 +100,9 @@ class AddView(WgerFormMixin, LoginRequiredMixin, PermissionRequiredMixin, Create
         Send some additional data to the template
         '''
         context = super(AddView, self).get_context_data(**kwargs)
-        context['form_action'] = reverse('gym:contract:add',
-                                         kwargs={'user_pk': self.kwargs['user_pk']})
+        context['form_action'] = reverse(
+            'gym:contract:add',
+            kwargs={'user_pk': self.kwargs['user_pk']})
         return context
 
 
@@ -119,12 +123,14 @@ class DetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
             return HttpResponseForbidden()
 
         contract = self.get_object()
-        if contract.member.userprofile.gym_id != request.user.userprofile.gym_id:
+        if contract.member.userprofile.gym_id \
+                != request.user.userprofile.gym_id:
             return HttpResponseForbidden()
         return super(DetailView, self).dispatch(request, *args, **kwargs)
 
 
-class UpdateView(WgerFormMixin, LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class UpdateView(WgerFormMixin, LoginRequiredMixin,
+                 PermissionRequiredMixin, UpdateView):
     '''
     View to update an existing contract
     '''
@@ -143,7 +149,8 @@ class UpdateView(WgerFormMixin, LoginRequiredMixin, PermissionRequiredMixin, Upd
             return HttpResponseForbidden()
 
         contract = self.get_object()
-        if contract.member.userprofile.gym_id != request.user.userprofile.gym_id:
+        if contract.member.userprofile.gym_id \
+                != request.user.userprofile.gym_id:
             return HttpResponseForbidden()
         return super(UpdateView, self).dispatch(request, *args, **kwargs)
 

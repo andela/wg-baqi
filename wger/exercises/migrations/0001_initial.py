@@ -19,7 +19,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Equipment',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=50, verbose_name='Name')),
             ],
             options={
@@ -29,14 +31,31 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Exercise',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('license_author', models.CharField(blank=True, help_text='If you are not the author, enter the name or source here. This is needed for some licenses e.g. the CC-BY-SA.', max_length=50, null=True, verbose_name='Author')),
-                ('status', models.CharField(choices=[('1', 'Pending'), ('2', 'Accepted'), ('3', 'Declined')], default='1', editable=False, max_length=2)),
-                ('description', models.TextField(max_length=2000, validators=[django.core.validators.MinLengthValidator(40)], verbose_name='Description')),
-                ('name', models.CharField(max_length=200, verbose_name='Name')),
-                ('name_original', models.CharField(default='', max_length=200, verbose_name='Name')),
-                ('creation_date', models.DateField(auto_now_add=True, null=True, verbose_name='Date')),
-                ('uuid', models.CharField(default=uuid.uuid4, editable=False, max_length=36, verbose_name='UUID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True, serialize=False, verbose_name='ID')),
+                ('license_author', models.CharField(
+                    blank=True, help_text='If you are not the author, enter \
+                    the name or source here. This is needed for some licenses \
+                    e.g. the CC-BY-SA.',
+                    max_length=50, null=True, verbose_name='Author')),
+                ('status', models.CharField(choices=[
+                 ('1', 'Pending'), ('2', 'Accepted'),
+                 ('3', 'Declined')],
+                    default='1', editable=False, max_length=2)),
+                ('description', models.TextField(
+                    max_length=2000, validators=[
+                        django.core.validators.MinLengthValidator(40)],
+                    verbose_name='Description')),
+                ('name', models.CharField(
+                    max_length=200, verbose_name='Name')),
+                ('name_original', models.CharField(
+                    default='', max_length=200, verbose_name='Name')),
+                ('creation_date', models.DateField(
+                    auto_now_add=True, null=True, verbose_name='Date')),
+                ('uuid', models.CharField(
+                    default=uuid.uuid4,
+                    editable=False, max_length=36, verbose_name='UUID')),
             ],
             options={
                 'ordering': ['name'],
@@ -45,8 +64,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ExerciseCategory',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='Name')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(
+                    max_length=100, verbose_name='Name')),
             ],
             options={
                 'verbose_name_plural': 'Exercise Categories',
@@ -56,8 +78,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Muscle',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(help_text='In latin, e.g. "Pectoralis major"', max_length=50, verbose_name='Name')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(
+                    help_text='In latin, e.g. "Pectoralis major"',
+                    max_length=50, verbose_name='Name')),
                 ('is_front', models.BooleanField(default=1)),
             ],
             options={
@@ -67,13 +93,36 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ExerciseImage',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('license_author', models.CharField(blank=True, help_text='If you are not the author, enter the name or source here. This is needed for some licenses e.g. the CC-BY-SA.', max_length=50, null=True, verbose_name='Author')),
-                ('status', models.CharField(choices=[('1', 'Pending'), ('2', 'Accepted'), ('3', 'Declined')], default='1', editable=False, max_length=2)),
-                ('image', models.ImageField(help_text='Only PNG and JPEG formats are supported', upload_to=wger.exercises.models.exercise_image_upload_dir, verbose_name='Image')),
-                ('is_main', models.BooleanField(default=False, help_text='Tick the box if you want to set this image as the main one for the exercise (will be shown e.g. in the search). The first image is automatically marked by the system.', verbose_name='Main picture')),
-                ('exercise', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='exercises.Exercise', verbose_name='Exercise')),
-                ('license', models.ForeignKey(default=2, on_delete=django.db.models.deletion.CASCADE, to='core.License', verbose_name='License')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True, serialize=False, verbose_name='ID')),
+                ('license_author', models.CharField(
+                    blank=True, help_text='If you are not the author, enter \
+                    the name or source here. This is needed for some licenses \
+                    e.g. the CC-BY-SA.',
+                    max_length=50, null=True,
+                    verbose_name='Author')),
+                ('status', models.CharField(choices=[
+                 ('1', 'Pending'), ('2', 'Accepted'),
+                 ('3', 'Declined')],
+                    default='1',
+                    editable=False, max_length=2)),
+                ('image', models.ImageField(
+                    help_text='Only PNG and JPEG formats are supported',
+                    upload_to=wger.exercises.models.exercise_image_upload_dir,
+                    verbose_name='Image')),
+                ('is_main', models.BooleanField(
+                    default=False, help_text='Tick the box if you want to set \
+                    this image as the main one for the exercise (will be \
+                    shown e.g. in the search). The first image is \
+                    automatically marked by the system.',
+                    verbose_name='Main picture')),
+                ('exercise', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to='exercises.Exercise', verbose_name='Exercise')),
+                ('license', models.ForeignKey(
+                    default=2, on_delete=django.db.models.deletion.CASCADE,
+                    to='core.License', verbose_name='License')),
             ],
             options={
                 'ordering': ['-is_main', 'id'],
@@ -82,39 +131,59 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ExerciseComment',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('comment', models.CharField(help_text='A comment about how to correctly do this exercise.', max_length=200, verbose_name='Comment')),
-                ('exercise', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.CASCADE, to='exercises.Exercise', verbose_name='Exercise')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True, serialize=False, verbose_name='ID')),
+                ('comment', models.CharField(
+                    help_text='A comment about how to correctly do this \
+                    exercise.', max_length=200, verbose_name='Comment')),
+                ('exercise', models.ForeignKey(
+                    editable=False,
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to='exercises.Exercise', verbose_name='Exercise')),
             ],
         ),
         migrations.AddField(
             model_name='exercise',
             name='category',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='exercises.ExerciseCategory', verbose_name='Category'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='exercises.ExerciseCategory', verbose_name='Category'),
         ),
         migrations.AddField(
             model_name='exercise',
             name='equipment',
-            field=models.ManyToManyField(blank=True, to='exercises.Equipment', verbose_name='Equipment'),
+            field=models.ManyToManyField(
+                blank=True,
+                to='exercises.Equipment', verbose_name='Equipment'),
         ),
         migrations.AddField(
             model_name='exercise',
             name='language',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.Language', verbose_name='Language'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='core.Language', verbose_name='Language'),
         ),
         migrations.AddField(
             model_name='exercise',
             name='license',
-            field=models.ForeignKey(default=2, on_delete=django.db.models.deletion.CASCADE, to='core.License', verbose_name='License'),
+            field=models.ForeignKey(
+                default=2,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='core.License', verbose_name='License'),
         ),
         migrations.AddField(
             model_name='exercise',
             name='muscles',
-            field=models.ManyToManyField(blank=True, to='exercises.Muscle', verbose_name='Primary muscles'),
+            field=models.ManyToManyField(blank=True, to='exercises.Muscle',
+                                         verbose_name='Primary muscles'),
         ),
         migrations.AddField(
             model_name='exercise',
             name='muscles_secondary',
-            field=models.ManyToManyField(blank=True, related_name='secondary_muscles', to='exercises.Muscle', verbose_name='Secondary muscles'),
+            field=models.ManyToManyField(
+                blank=True,
+                related_name='secondary_muscles', to='exercises.Muscle',
+                verbose_name='Secondary muscles'),
         ),
     ]

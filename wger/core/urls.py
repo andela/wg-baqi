@@ -34,19 +34,19 @@ from wger.core.views import (
 
 # sub patterns for languages
 patterns_language = [
-   url(r'^list$',
+    url(r'^list$',
         languages.LanguageListView.as_view(),
         name='overview'),
-   url(r'^(?P<pk>\d+)/view$',
+    url(r'^(?P<pk>\d+)/view$',
         languages.LanguageDetailView.as_view(),
         name='view'),
-   url(r'^(?P<pk>\d+)/delete$',
+    url(r'^(?P<pk>\d+)/delete$',
         languages.LanguageDeleteView.as_view(),
         name='delete'),
-   url(r'^(?P<pk>\d+)/edit',
+    url(r'^(?P<pk>\d+)/edit',
         languages.LanguageEditView.as_view(),
         name='edit'),
-   url(r'^add$',
+    url(r'^add$',
         languages.LanguageCreateView.as_view(),
         name='add'),
 ]
@@ -96,7 +96,8 @@ patterns_user = [
         user.UserListView.as_view(),
         name='list'),
 
-    # Password reset is implemented by Django, no need to cook our own soup here
+    # Password reset is implemented by Django, no need to cook our own soup
+    # here
     # (besides the templates)
     url(r'^password/change$',
         views.PasswordChangeView.as_view(
@@ -116,10 +117,12 @@ patterns_user = [
         views.PasswordResetDoneView.as_view(),
         {'template_name': 'user/password_reset_done.html'},
         name='password_reset_done'),
-    url(r'^password/reset/check/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})$',
+    url(r'^password/reset/check/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})$',  # noqa
         views.PasswordResetConfirmView.as_view(),
-        {'template_name': 'user/password_reset_confirm.html',
-         'post_reset_redirect': reverse_lazy('core:user:password_reset_complete')},
+        {
+            'template_name': 'user/password_reset_confirm.html',
+            'post_reset_redirect': reverse_lazy(
+                'core:user:password_reset_complete')},
         name='password_reset_confirm'),
     url(r'^password/reset/complete/$',
         views.PasswordResetCompleteView.as_view(),
@@ -203,9 +206,14 @@ urlpatterns = [
         misc.FeedbackClass.as_view(),
         name='feedback'),
 
-    url(r'^language/', include((patterns_language, "language"), namespace="language")),
+    url(r'^language/', include(
+        (patterns_language, "language"), namespace="language")),
     url(r'^user/', include((patterns_user, "user"), namespace="user")),
-    url(r'^license/', include((patterns_license, "license"), namespace="license")),
-    url(r'^repetition-unit/', include((patterns_repetition_units, "repetition-unit"), namespace="repetition-unit")),
-    url(r'^weight-unit/', include((patterns_weight_units, "weight-unit"), namespace="weight-unit")),
+    url(r'^license/', include(
+        (patterns_license, "license"), namespace="license")),
+    url(r'^repetition-unit/', include(
+        (patterns_repetition_units,
+         "repetition-unit"), namespace="repetition-unit")),
+    url(r'^weight-unit/', include(
+        (patterns_weight_units, "weight-unit"), namespace="weight-unit")),
 ]

@@ -28,8 +28,8 @@ DATABASES = {{
 SECRET_KEY = '{default_key}'
 
 # Your reCaptcha keys
-RECAPTCHA_PUBLIC_KEY = ''
-RECAPTCHA_PRIVATE_KEY = ''
+RECAPTCHA_PUBLIC_KEY = '6Lf6HKYUAAAAAK_Ju5QDfl7Lu3EhgZN2VeS2hh00'
+RECAPTCHA_PRIVATE_KEY = '6Lf6HKYUAAAAAK_Ju5QDfl7Lu3EhgZN2VeS2hh00'
 NOCAPTCHA = True
 
 # The site's URL (e.g. http://www.my-local-gym.com or http://localhost:8000)

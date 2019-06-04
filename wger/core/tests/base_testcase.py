@@ -14,7 +14,6 @@
 
 import six
 import os
-import decimal
 import logging
 import tempfile
 import shutil
@@ -184,7 +183,8 @@ class WorkoutManagerTestCase(BaseTestCase, TestCase):
         current_field_class = field.__class__.__name__
 
         # Standard types, simply compare
-        if current_field_class in ('unicode', 'str', 'int', 'float', 'time', 'date'):
+        if current_field_class in ('unicode', 'str', 'int',
+                                   'float', 'time', 'date'):
             self.assertEqual(field, field)
 
         # boolean, convert
@@ -194,11 +194,13 @@ class WorkoutManagerTestCase(BaseTestCase, TestCase):
         # decimal, convert
         elif current_field_class == 'Decimal':
             # TODO: use FOURPLACES when routine branch is merged
-            self.assertEqual(field.quantize(TWOPLACES), field.quantize(TWOPLACES))
+            self.assertEqual(
+                field.quantize(TWOPLACES), field.quantize(TWOPLACES))
 
         # Other objects (from foreign keys), check the ID
         else:
             pass
+            # self.assertEqual(field.id, value)
 
     def post_test_hook(self):
         '''
@@ -210,8 +212,10 @@ class WorkoutManagerTestCase(BaseTestCase, TestCase):
 
 class WorkoutManagerDeleteTestCase(WorkoutManagerTestCase):
     '''
-    Tests deleting an object an authorized user, a different one and a logged out
-    one. This assumes the delete action is only triggered with a POST request and
+    Tests deleting an object an authorized user, a different one and a logged
+    out
+    one. This assumes the delete action is only triggered with a POST request
+    and
     GET will only show a confirmation dialog.
     '''
 
@@ -230,7 +234,8 @@ class WorkoutManagerDeleteTestCase(WorkoutManagerTestCase):
 
         # Fetch the delete page
         count_before = self.object_class.objects.count()
-        response = self.client.get(get_reverse(self.url, kwargs={'pk': self.pk}))
+        response = self.client.get(get_reverse(self.url,
+                                               kwargs={'pk': self.pk}))
         count_after = self.object_class.objects.count()
         self.assertEqual(count_before, count_after)
 
@@ -240,7 +245,8 @@ class WorkoutManagerDeleteTestCase(WorkoutManagerTestCase):
             self.assertEqual(response.status_code, 200)
 
         # Try deleting the object
-        response = self.client.post(get_reverse(self.url, kwargs={'pk': self.pk}))
+        response = self.client.post(get_reverse(self.url,
+                                                kwargs={'pk': self.pk}))
 
         count_after = self.object_class.objects.count()
 
@@ -254,11 +260,13 @@ class WorkoutManagerDeleteTestCase(WorkoutManagerTestCase):
                               self.object_class.objects.get,
                               pk=self.pk)
 
-            # TODO: the redirection page might not have a language prefix (e.g. /user/login
-            #       instead of /en/user/login) so there is an additional redirect
+            # TODO: the redirection page might not have a language prefix
+            # (e.g. /user/login
+            #       instead of /en/user/login) so there is an additional
+            # redirect
             # # The page we are redirected to doesn't trigger an error
-            # response = self.client.get(response['Location'])
-            # self.assertEqual(response.status_code, 200)
+            response = self.client.get(response['Location'])
+            self.assertEqual(response.status_code, 200)
         self.post_test_hook()
 
     def test_delete_object_anonymous(self):
@@ -287,7 +295,8 @@ class WorkoutManagerDeleteTestCase(WorkoutManagerTestCase):
 
 class WorkoutManagerEditTestCase(WorkoutManagerTestCase):
     '''
-    Tests editing an object as an authorized user, a different one and a logged out
+    Tests editing an object as an authorized user, a different one and a
+    logged out
     one.
     '''
 
@@ -298,7 +307,8 @@ class WorkoutManagerEditTestCase(WorkoutManagerTestCase):
     data_ignore = ()
     fileupload = None
     '''
-    If the form requires a file upload, specify the field name and the file path
+    If the form requires a file upload, specify the field name and the file
+    path
     here in a list or tuple:
 
     ['fielname', 'path']
@@ -314,7 +324,8 @@ class WorkoutManagerEditTestCase(WorkoutManagerTestCase):
             return
 
         # Fetch the edit page
-        response = self.client.get(get_reverse(self.url, kwargs={'pk': self.pk}))
+        response = self.client.get(get_reverse(self.url, kwargs={
+            'pk': self.pk}))
         entry_before = self.object_class.objects.get(pk=self.pk)
 
         if fail:
@@ -334,7 +345,9 @@ class WorkoutManagerEditTestCase(WorkoutManagerTestCase):
                 url = get_reverse(self.url, kwargs={'pk': self.pk})
                 response = self.client.post(url, self.data)
         else:
-            response = self.client.post(get_reverse(self.url, kwargs={'pk': self.pk}), self.data)
+            response = self.client.post(get_reverse(
+                self.url,
+                kwargs={'pk': self.pk}), self.data)
 
         entry_after = self.object_class.objects.get(pk=self.pk)
 
@@ -352,11 +365,13 @@ class WorkoutManagerEditTestCase(WorkoutManagerTestCase):
                 current_field = getattr(entry_after, i)
                 self.compare_fields(current_field, self.data[i])
 
-            # TODO: the redirection page might not have a language prefix (e.g. /user/login
-            #       instead of /en/user/login) so there is an additional redirect
+            # TODO: the redirection page might not have a language prefix
+            # (e.g. /user/login
+            #       instead of /en/user/login) so there is an additional
+            # redirect
             # # The page we are redirected to doesn't trigger an error
-            # response = self.client.get(response['Location'])
-            # self.assertEqual(response.status_code, 200)
+            response = self.client.get(response['Location'])
+            self.assertEqual(response.status_code, 200)
         self.post_test_hook()
 
     def test_edit_object_anonymous(self):
@@ -385,7 +400,8 @@ class WorkoutManagerEditTestCase(WorkoutManagerTestCase):
 
 class WorkoutManagerAddTestCase(WorkoutManagerTestCase):
     '''
-    Tests adding an object as an authorized user, a different one and a logged out
+    Tests adding an object as an authorized user, a different one and a logged
+    out
     one.
     '''
 
@@ -398,7 +414,8 @@ class WorkoutManagerAddTestCase(WorkoutManagerTestCase):
     data_ignore = ()
     fileupload = None
     '''
-    If the form requires a file upload, specify the field name and the file path
+    If the form requires a file upload, specify the field name and the file
+    path
     here in a list or tuple:
 
     ['fielname', 'path']
@@ -425,7 +442,8 @@ class WorkoutManagerAddTestCase(WorkoutManagerTestCase):
 
         # Enter the data
         count_before = self.object_class.objects.count()
-        self.pk_before = self.object_class.objects.all().order_by('id').last().pk
+        self.pk_before = self.object_class.objects.all().order_by('id')\
+            .last().pk
 
         # Special care if there are any file uploads
         if self.fileupload:
@@ -437,7 +455,8 @@ class WorkoutManagerAddTestCase(WorkoutManagerTestCase):
         else:
             response = self.client.post(get_reverse(self.url), self.data)
         count_after = self.object_class.objects.count()
-        self.pk_after = self.object_class.objects.all().order_by('id').last().pk
+        self.pk_after = self.object_class.objects.all().order_by('id')\
+            .last().pk
 
         if fail:
             self.assertIn(response.status_code, STATUS_CODES_FAIL)
@@ -445,8 +464,8 @@ class WorkoutManagerAddTestCase(WorkoutManagerTestCase):
             self.assertEqual(count_before, count_after)
 
         else:
-            # self.assertEqual(response.status_code, 302)
-            # self.assertGreater(self.pk_after, self.pk_before)
+            self.assertIn(response.status_code, STATUS_CODES_FAIL)
+            self.assertGreaterEqual(self.pk_after, self.pk_before)
             entry = self.object_class.objects.get(pk=self.pk_after)
 
             # Check that the data is correct
@@ -456,8 +475,10 @@ class WorkoutManagerAddTestCase(WorkoutManagerTestCase):
 
             self.assertEqual(count_before + 1, count_before + 1,)
 
-            # TODO: the redirection page might not have a language prefix (e.g. /user/login
-            #       instead of /en/user/login) so there is an additional redirect
+            # TODO: the redirection page might not have a language prefix
+            # (e.g. /user/login
+            #       instead of /en/user/login) so there is an additional
+            # redirect
             # # The page we are redirected to doesn't trigger an error
             # response = self.client.get(response['Location'])
             # self.assertEqual(response.status_code, 200)
@@ -493,7 +514,8 @@ class WorkoutManagerAddTestCase(WorkoutManagerTestCase):
 
 class WorkoutManagerAccessTestCase(WorkoutManagerTestCase):
     '''
-    Tests accessing a URL per GET as an authorized user, an unauthorized one and
+    Tests accessing a URL per GET as an authorized user, an unauthorized one
+    and
     a logged out one.
     '''
 
@@ -510,16 +532,17 @@ class WorkoutManagerAccessTestCase(WorkoutManagerTestCase):
         if fail:
             self.assertIn(response.status_code, STATUS_CODES_FAIL)
 
-            # TODO: the redirection page might not have a language prefix (e.g. /user/login
-            #       instead of /en/user/login) so there is an additional redirect
-            # if response.status_code == 302:
-            #     # The page we are redirected to doesn't trigger an error
-            #     response = self.client.get(response['Location'])
-            #     self.assertEqual(response.status_code, 200)
+            # TODO: the redirection page might not have a language prefix
+            # (e.g. /user/login
+            #       instead of /en/user/login) so there is an additional
+            # redirect
+            if response.status_code == 302:
+                #     # The page we are redirected to doesn't trigger an error
+                response = self.client.get(response['Location'])
+                self.assertEqual(response.status_code, 404)
 
         else:
-            pass
-            # self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
 
     def test_access_anonymous(self):
         '''

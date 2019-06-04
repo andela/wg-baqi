@@ -32,7 +32,6 @@ install:
   - npm install
   - pip install coveralls
 
-
 services:
   - postgresql
 addons:
@@ -48,7 +47,7 @@ before_script:
 # Do the tests
 script:
   # Regular application
-  - coverage run --source=wger manage.py test 
+  - coverage run --source=wger manage.py test
 
   # Code coverage
   - coverage report
@@ -56,3 +55,4 @@ script:
 
 after_success:
   - coveralls
+  - flake8 wger

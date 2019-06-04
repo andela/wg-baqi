@@ -107,7 +107,8 @@ class AddWorkoutTestCase(WorkoutManagerTestCase):
         self.assertGreater(count_after, count_before)
 
         # Test accessing workout
-        response = self.client.get(reverse('manager:workout:view', kwargs={'pk': 1}))
+        response = self.client.get(reverse(
+            'manager:workout:view', kwargs={'pk': 1}))
 
         workout = Workout.objects.get(pk=1)
         self.assertEqual(response.context['workout'], workout)
@@ -184,8 +185,9 @@ class WorkoutModelTestCase(WorkoutManagerTestCase):
 
         workout = Workout()
         workout.creation_date = datetime.date.today()
-        self.assertNotEqual('{0}'.format(workout),
-                         '{0} ({1})'.format(u'Workout', datetime.date.today()))
+        self.assertNotEqual(
+            '{0}'.format(workout),
+            '{0} ({1})'.format(u'Workout', datetime.date.today()))
 
         workout.comment = u'my description'
         self.assertEqual('{0}'.format(workout), u'my description')
