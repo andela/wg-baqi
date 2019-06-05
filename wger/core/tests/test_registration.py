@@ -13,10 +13,9 @@
 # You should have received a copy of the GNU Affero General Public License
 
 import logging
-
 from django.contrib.auth.models import User
 from django.urls import reverse
-
+from wger.core.models import UserProfile
 from wger.core.forms import RegistrationForm
 from wger.core.forms import RegistrationFormNoCaptcha
 from wger.core.tests.base_testcase import WorkoutManagerTestCase
@@ -124,3 +123,64 @@ class RegistrationTestCase(WorkoutManagerTestCase):
             count_after = User.objects.count()
             self.assertEqual(response.status_code, 302)
             self.assertEqual(count_before, count_after)
+
+
+class RegistrationTestCaseRest(WorkoutManagerTestCase):
+
+    def test_register(self):
+        url = '/api/v2/signup/'
+        unauthorized = dict(username='test_user1', email='test1@gmail.com',
+                            password='pAss!w@rd')
+        # Test unauthorized user
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+        # Test register via Rest API
+        self.user_login()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        test_data = dict(username='test_user', email='test@gmail.com',
+                         password='pAss!w@rd')
+        response = self.client.post(url, data=test_data)
+        self.assertEqual(response.status_code, 201)
+
+        # Test username exists
+        response1 = self.client.post(url, data=test_data)
+        self.assertEqual(response1.status_code, 400)
+
+        # test no data
+        response = self.client.post(url, data={})
+        self.assertEqual(response.status_code, 400)
+
+        # test get user
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # test authorized user
+        user = User.objects.get(username="test")
+        userprofile = UserProfile.objects.get(user=user)
+        userprofile.create_user_via_api = False
+        userprofile.save()
+        create_user = {"username": "testperms", "password": "adminuser",
+                       "email": "email@test.com"}
+        response = self.client.post(url, data=create_user)
+        self.assertEqual(response.status_code, 201)
+
+    def test_unauthorized_user(self):
+        ''' Test unauthorized user '''
+
+        url = '/api/v2/signup/'
+        unauthorized = dict(username='test_user1', email='test1@gmail.com',
+                            password='pAss!w@rd')
+        response = self.client.post(url, data=unauthorized)
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_all_created_users(self):
+        """
+        test get all users
+        """
+        url = '/api/v2/signup/'
+        self.user_login()
+        response = self.client.get(url)
+        User.objects.all()
+        self.assertEqual(response.status_code, 200)

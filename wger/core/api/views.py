@@ -16,7 +16,7 @@
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth.models import User
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 
@@ -33,10 +33,13 @@ from wger.core.api.serializers import (
     DaysOfWeekSerializer,
     LicenseSerializer,
     RepetitionUnitSerializer,
-    WeightUnitSerializer
+    WeightUnitSerializer,
+    UserCreationSerializer
 )
 from wger.core.api.serializers import UserprofileSerializer
-from wger.utils.permissions import UpdateOnlyPermission, WgerPermission
+from wger.utils.permissions import (UpdateOnlyPermission,
+                                    WgerPermission,
+                                    CreateUserApiPermission)
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -121,3 +124,35 @@ class WeightUnitViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = WeightUnitSerializer
     ordering_fields = '__all__'
     filter_fields = ('name', )
+
+
+class UserCreationViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint for creation of new users
+    '''
+    is_private = True
+    serializer_class = UserCreationSerializer
+    permission_classes = (CreateUserApiPermission,)
+    queryset = User.objects.all()
+
+    def user_create(self, request):
+        '''
+        Create user via API
+        '''
+
+        user_ = UserProfile.objects.get(user=self.request.user)
+
+        user_ and user_.create_user
+        serialized = self.get_serializer(data=self.request.data)
+        if sezialized.is_valid():
+            username = serialized.data['username']
+            email = serialized.data['email']
+            password = self.request.data['password']
+
+            new_user = User.objects.create_user_via_api(email=email,
+                                                        username=username,
+                                                        password=password)
+            new_user.save()
+
+            return Response({"message": "User created successfully"},
+                            status.HTTP_201_CREATED)
