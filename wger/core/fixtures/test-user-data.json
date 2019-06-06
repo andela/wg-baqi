@@ -476,6 +476,24 @@
         }
     },
     {
+        "pk": 25, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "mytestuserzon", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_staff": false, 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "somedummypass", 
+            "date_joined": "2013-03-30T00:23:21.592Z", 
+            "first_name": "", 
+            "is_superuser": false, 
+            "last_login": "2013-03-30T00:23:21.592Z", 
+            "email": "mytestuserzon@example.com"
+        }
+    },
+    {
         "pk": 1, 
         "model": "core.userprofile",
         "fields": {

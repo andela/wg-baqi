@@ -1,3 +1,5 @@
+"""Serializers for core apllications."""
+
 # -*- coding: utf-8 -*-
 
 # This file is part of wger Workout Manager.
@@ -23,68 +25,183 @@ from wger.core.models import (
     DaysOfWeek,
     License,
     RepetitionUnit,
-    WeightUnit)
+    WeightUnit,
+)
+from django.contrib.auth import authenticate
 
 
 class UserprofileSerializer(serializers.ModelSerializer):
-    '''
-    Workout session serializer
-    '''
+    """Workout session serializer."""
+
     class Meta:
+        """meta class specify fields and model."""
+
         model = UserProfile
         fields = '__all__'
 
 
 class UsernameSerializer(serializers.Serializer):
-    '''
-    Serializer to extract the username
-    '''
+    """Serializer to extract the username."""
+
     username = serializers.CharField()
 
 
 class LanguageSerializer(serializers.ModelSerializer):
-    '''
-    Language serializer
-    '''
+    """Language serializer."""
+
     class Meta:
+        """meta class specify fields and model."""
+
         model = Language
         fields = '__all__'
 
 
 class DaysOfWeekSerializer(serializers.ModelSerializer):
-    '''
-    DaysOfWeek serializer
-    '''
+    """DaysOfWeek serializer."""
+
     class Meta:
+        """meta class specify fields and model."""
+
         model = DaysOfWeek
         fields = '__all__'
 
 
 class LicenseSerializer(serializers.ModelSerializer):
-    '''
-    License serializer
-    '''
+    """License serializer."""
+
     class Meta:
+        """meta class specify fields and model."""
+
         model = License
         fields = '__all__'
 
 
 class RepetitionUnitSerializer(serializers.ModelSerializer):
-    '''
-    Repetition unit serializer
-    '''
+    """Repetition unit serializer."""
+
     class Meta:
+        """meta class specify fields and model."""
+
         model = RepetitionUnit
         fields = '__all__'
 
 
 class WeightUnitSerializer(serializers.ModelSerializer):
-    '''
-    Weight unit serializer
-    '''
+    """Weight unit serializer."""
+
     class Meta:
+        """meta class specify fields and model."""
+
         model = WeightUnit
         fields = '__all__'
+
+
+class SocialAuthSerializer(serializers.ModelSerializer):
+    """Serializer for social authentication."""
+
+    provider = serializers.CharField(
+        max_length=30,
+        allow_blank=True
+    )
+    access_token = serializers.CharField(
+        max_length=255,
+        allow_blank=True
+    )
+    access_token_secret = serializers.CharField(
+        max_length=255,
+        allow_blank=True,
+        default=""
+    )
+
+    class Meta:
+        """Meta class for social auth serialize."""
+
+        model = User
+        fields = ("provider", "access_token", "access_token_secret")
+
+    def validate(self, data):
+        """Method to validate provider and access token."""
+        # provider_list = ['google-oauth2', 'twitter', 'facebook']
+        provider = data.get('provider', None)
+        access_token = data.get('access_token', None)
+        access_token_secret = data.get('access_token_secret', None)
+        if not provider:
+            raise serializers.ValidationError(
+                'A provider is required for Social Login'
+            )
+
+        if not access_token:
+            raise serializers.ValidationError(
+                'An access token is required for Social Login'
+            )
+
+        if provider == 'twitter' and not access_token_secret:
+            raise serializers.ValidationError(
+                'An access token secret is required for Twitter Login'
+            )
+
+        return data
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Serializer for user creations."""
+
+    class Meta:
+        """Specify model and fiels."""
+
+        model = User
+        fields = ("username", "email", "password")
+
+
+class LoginSerializer(serializers.Serializer):
+    """Login serializer for api."""
+
+    email = serializers.EmailField(
+        max_length=255, allow_blank=True,
+        required=False)
+    username = serializers.CharField(
+        max_length=255, allow_blank=True,
+        required=False)
+    password = serializers.CharField(max_length=128, write_only=True)
+
+    def validate(self, data):
+        """Validate user data on login."""
+        email = data.get('email', None)
+        username = data.get('username', None)
+        password = data.get('password', None)
+
+        if not email and not username:
+            raise serializers.ValidationError(
+                'either your email or username is required to log in'
+            )
+
+        if not password:
+            raise serializers.ValidationError(
+                'Password is required to log in.'
+            )
+
+        if email:
+            email_user = User.objects.get(email=email)
+            username = email_user.username
+
+        user = authenticate(username=username, password=password)
+
+        if user is None:
+            raise serializers.ValidationError(
+                'User with provided email/username and password was not found'
+            )
+
+        return {
+            'id': user.id,
+            'email': user.email,
+            'username': user.username,
+        }
+
+    class Meta:
+        """User model and fields."""
+
+        model = User
+        fields = ('email', 'username', 'password')
 
 
 class UserCreationSerializer(serializers.ModelSerializer):

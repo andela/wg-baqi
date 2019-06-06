@@ -1,3 +1,15 @@
+""".
+
+This file contains the global settings that don't usually need to
+
+be changed.
+
+For a full list of options, visit:
+
+https://docs.djangoproject.com/en/dev/ref/settings/
+
+"""
+
 # -*- coding: utf-8 -*-
 
 # This file is part of wger Workout Manager.
@@ -16,15 +28,10 @@
 
 import re
 import sys
-
-'''
-This file contains the global settings that don't usually need to be changed.
-For a full list of options, visit:
-    https://docs.djangoproject.com/en/dev/ref/settings/
-'''
+import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
@@ -87,7 +94,49 @@ INSTALLED_APPS = (
 
     # django-bower for installing bower packages
     'djangobower',
+
+    # social auth
+    'django_social_share',
+    'oauth2_provider',
+    'social_django',
+    'rest_framework_social_oauth2',
 )
+
+# jwt authentication settings
+JWT_AUTH = {
+    'JWT_ENCODE_HANDLER':
+    'rest_framework_jwt.utils.jwt_encode_handler',
+
+    'JWT_DECODE_HANDLER':
+    'rest_framework_jwt.utils.jwt_decode_handler',
+
+    'JWT_PAYLOAD_HANDLER':
+    'rest_framework_jwt.utils.jwt_payload_handler',
+
+    'JWT_PAYLOAD_GET_USER_ID_HANDLER':
+    'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
+
+    'JWT_RESPONSE_PAYLOAD_HANDLER':
+    'rest_framework_jwt.utils.jwt_response_payload_handler',
+
+    'JWT_SECRET_KEY': os.getenv('SECRET_KEY'),
+    'JWT_GET_USER_SECRET_KEY': None,
+    'JWT_PUBLIC_KEY': None,
+    'JWT_PRIVATE_KEY': None,
+    'JWT_ALGORITHM': 'HS256',
+    'JWT_VERIFY': True,
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LEEWAY': 0,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_AUDIENCE': None,
+    'JWT_ISSUER': None,
+
+    'JWT_ALLOW_REFRESH': False,
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_AUTH_COOKIE': None,
+}
 
 # added list of external libraries to be installed by bower
 BOWER_INSTALLED_APPS = (
@@ -115,18 +164,22 @@ MIDDLEWARE = (
     # Javascript Header. Sends helper headers for AJAX
     'wger.utils.middleware.JavascriptAJAXRedirectionMiddleware',
 
-    # Custom authentication middleware. Creates users on-the-fly for certain paths
+    # Custom authentication middleware. Creates users on-the-fly for certain
+    # paths
     'wger.utils.middleware.WgerAuthenticationMiddleware',
 
     # Send an appropriate Header so search engines don't index pages
-    'wger.utils.middleware.RobotsExclusionMiddleware'
+    'wger.utils.middleware.RobotsExclusionMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 )
 
 
 MIDDLEWARE_CLASSES = (
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 
     # Javascript Header. Sends helper headers for AJAX
@@ -146,11 +199,50 @@ MIDDLEWARE_CLASSES = (
     # Django mobile
     'django_mobile.middleware.MobileDetectionMiddleware',
     'django_mobile.middleware.SetFlavourMiddleware',
+
+    # social auth
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookAppOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
     'django.contrib.auth.backends.ModelBackend',
-    'wger.utils.helpers.EmailAuthBackend',
+)
+
+# facebook credentials
+SOCIAL_AUTH_FACEBOOK_KEY = os.getenv('FACEBOOK_API_KEY')
+SOCIAL_AUTH_FACEBOOK_SECRET = os.getenv('FACEBOOK_SECRET_KEY')
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'id, name, email'
+}
+
+# google credentials
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('GOOGLE_API_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv(
+    'GOOGLE_SECRET_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'username']
+
+# Twitter credentials
+SOCIAL_AUTH_TWITTER_KEY = os.getenv('TWITTER_API_KEY')
+SOCIAL_AUTH_TWITTER_SECRET = os.getenv('TWITTER_SECRET_KEY')
+SOCIAL_AUTH_TWITTER_SCOPE = ['email']
+
+# social auth pipelines
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
 )
 
 TEMPLATES = [
@@ -170,6 +262,10 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
+
+                # social login
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
 
                 # Django mobile
                 'django_mobile.context_processors.flavour',
@@ -357,7 +453,9 @@ else:
 # Django Rest Framework
 #
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('wger.utils.permissions.WgerPermission', ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'wger.utils.permissions.WgerPermission',
+    ),
     'PAGINATE_BY':
     20,
     'PAGINATE_BY_PARAM':
@@ -367,6 +465,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',

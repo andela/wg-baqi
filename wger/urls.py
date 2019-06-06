@@ -215,6 +215,7 @@ urlpatterns += [
         nutrition_api_views.search,
         name='ingredient-search'),
     url(r'^api/v2/', include(router.urls)),
+    url(r'^social/', include('wger.core.api.urls')),
 ]
 
 #
