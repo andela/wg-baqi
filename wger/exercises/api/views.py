@@ -17,6 +17,7 @@
 
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, api_view
 
@@ -75,6 +76,9 @@ class ExerciseViewSet(viewsets.ModelViewSet):
         # Todo is it right to call set author after save?
         obj.set_author(self.request)
         obj.save()
+
+    def get_queryset(self, *args, **kwargs):
+        return Exercise.objects.filter(id=self.kwargs.get('pk'))
 
 
 @api_view(['GET'])
