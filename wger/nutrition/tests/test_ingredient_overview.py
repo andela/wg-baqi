@@ -106,9 +106,8 @@ class OverviewPlanTestCase(WorkoutManagerTestCase):
         Tests the ingredient overview page as a logged in user with editor
         rights
         '''
-
         self.user_login('admin')
-        self.ingredient_overview(admin=False)
+        self.ingredient_overview(admin=True)
 
     def test_ingredient_index_non_editor(self):
         '''
@@ -125,7 +124,7 @@ class OverviewPlanTestCase(WorkoutManagerTestCase):
         '''
 
         self.user_login('demo')
-        self.ingredient_overview(demo=False)
+        self.ingredient_overview(demo=True)
 
     def test_ingredient_index_logged_out(self):
         '''

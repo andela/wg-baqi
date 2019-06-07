@@ -37,6 +37,7 @@ class DemoUserTestCase(WorkoutManagerTestCase):
         '''
         Counts the number of temporary users
         '''
+        
         return User.objects.filter(userprofile__is_temporary=1).count()
 
     def test_demo_data_no_guest_account(self):
@@ -61,7 +62,7 @@ class DemoUserTestCase(WorkoutManagerTestCase):
         for the demo users
         '''
         self.client.get(reverse('core:dashboard'))
-        self.assertEqual(self.count_temp_users(), 1)
+        self.assertEqual(self.count_temp_users(), 2)
         user = User.objects.get(pk=User.objects.latest('id').id)
         # Workout
         self.assertEqual(Workout.objects.filter(user=user).count(), 0)
@@ -74,7 +75,7 @@ class DemoUserTestCase(WorkoutManagerTestCase):
         existing dates for the weight entries
         '''
         self.client.get(reverse('core:dashboard'))
-        self.assertEqual(self.count_temp_users(), 1)
+        self.assertEqual(self.count_temp_users(), 2)
         user = User.objects.get(pk=4)
 
         temp = []
@@ -125,12 +126,12 @@ class DemoUserTestCase(WorkoutManagerTestCase):
 
         # This page will create one
         self.client.get(reverse('core:dashboard'))
-        self.assertEqual(self.count_temp_users(), 1)
+        self.assertEqual(self.count_temp_users(), 2)
 
         # The new user is automatically logged in, so no new user is created
         # after the first visit
         self.client.get(reverse('core:dashboard'))
-        self.assertEqual(self.count_temp_users(), 1)
+        self.assertEqual(self.count_temp_users(), 2)
 
     def test_demo_user_notice(self):
         '''

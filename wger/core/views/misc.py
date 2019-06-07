@@ -62,7 +62,6 @@ def demo_entries(request):
     '''
     if not settings.WGER_SETTINGS['ALLOW_GUEST_USERS']:
         return HttpResponseRedirect(reverse('software:features'))
-
     if (((not request.user.is_authenticated
           or request.user.userprofile.is_temporary)
          and not request.session['has_demo_data'])):

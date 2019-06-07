@@ -185,7 +185,7 @@ class WorkoutModelTestCase(WorkoutManagerTestCase):
 
         workout = Workout()
         workout.creation_date = datetime.date.today()
-        self.assertNotEqual(
+        self.assertEqual(
             '{0}'.format(workout),
             '{0} ({1})'.format(u'Workout', datetime.date.today()))
 

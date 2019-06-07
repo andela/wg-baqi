@@ -105,9 +105,21 @@ BOWER_INSTALLED_APPS = (
 )
 
 MIDDLEWARE = (
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware'
+    'django.contrib.messages.middleware.MessageMiddleware',
+
+    # Javascript Header. Sends helper headers for AJAX
+    'wger.utils.middleware.JavascriptAJAXRedirectionMiddleware',
+
+    # Custom authentication middleware. Creates users on-the-fly for certain paths
+    'wger.utils.middleware.WgerAuthenticationMiddleware',
+
+    # Send an appropriate Header so search engines don't index pages
+    'wger.utils.middleware.RobotsExclusionMiddleware'
 )
 
 
@@ -357,6 +369,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.OrderingFilter',
     )
 }

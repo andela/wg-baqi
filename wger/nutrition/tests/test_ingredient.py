@@ -160,7 +160,7 @@ class IngredientDetailTestCase(WorkoutManagerTestCase):
         '''
 
         self.user_login('admin')
-        self.ingredient_detail(editor=False)
+        self.ingredient_detail(editor=True)
 
     def test_ingredient_detail_non_editor(self):
         '''
@@ -194,7 +194,7 @@ class IngredientSearchTestCase(WorkoutManagerTestCase):
             reverse('ingredient-search'), {'term': 'test'}, **kwargs)
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content.decode('utf8'))
-        self.assertEqual(len(result['suggestions']), 0)
+        self.assertEqual(len(result['suggestions']), 2)
         response = self.client.get(
             reverse('ingredient-search'), {'term': 'Pending'}, **kwargs)
         self.assertEqual(response.status_code, 200)
@@ -212,7 +212,6 @@ class IngredientSearchTestCase(WorkoutManagerTestCase):
         '''
         Test searching for an ingredient by a logged in user
         '''
-
         self.user_login('test')
         self.search_ingredient()
 
