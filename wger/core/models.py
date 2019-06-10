@@ -331,6 +331,10 @@ difficult.'''),
                     MaxValueValidator(30)],
         default=0)
     '''Number of Days for email weight reminder'''
+    create_user_via_api = models.BooleanField(default=False)
+
+    created_by = models.CharField(max_length=255, null=True, default=None)
+    '''Allow users to use API to create users'''
 
     @property
     def weight(self):

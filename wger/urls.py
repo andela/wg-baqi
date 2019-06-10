@@ -156,6 +156,9 @@ router.register(
     r'weightentry',
     weight_api_views.WeightEntryViewSet, base_name='weightentry')
 
+# User Registration
+router.register(r'signup',
+                core_api_views.UserCreationViewSet, base_name='signup-user')
 
 admin.autodiscover()
 
