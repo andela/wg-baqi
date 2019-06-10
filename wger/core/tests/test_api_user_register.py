@@ -12,7 +12,9 @@ register_url = "/api/v2/signup/"
 class APIUserRegistrationTestCase(ApiBaseTestCase):
     """ Tests user registration throught the api """
     fixtures = BaseTestCase.fixtures
-    full_user = {"username": "apiTest", "email": "test@gmail.com", "password": "testpass"}
+    full_user = {"username": "apiTest",
+                 "email": "test@gmail.com",
+                 "password": "testpass"}
 
     def register_user(self, user=None, ex_status=status.HTTP_201_CREATED):
         """ Helper function for register user"""
@@ -30,20 +32,25 @@ class APIUserRegistrationTestCase(ApiBaseTestCase):
     def test_admin_api_user_create(self):
         """ Test that an admin can create user through the api """
 
+        expected_message = 'User was successfully created'
         self.get_credentials(username='admin')
-        self.register_user()
+        response = self.register_user()
+        message = response.data['message']
+        self.assertEqual(expected_message, message)
+        self.assertEqual(response.status_code, 201)
 
     def test_normal_user_cannot_create_user(self):
-
-        self.get_credentials(username='test')
-        self.register_user(None, status.HTTP_403_FORBIDDEN)
+        """ Test unauthirized user """
+        self.register_user(None, 403)
 
     def test_normal_user_with_permission_can_create_user(self):
         user = User.objects.get(username="admin")
         userprofile = UserProfile.objects.get(user=user)
         userprofile.user_can_create_users = True
         userprofile.save()
-        create_user = {"username": "testperms", "password": "adminuser"}
+        create_user = {"username": "testperms",
+                       "email": "test@gmail.com",
+                       "password": "adminuser"}
         self.get_credentials(username='admin')
         self.register_user(user=create_user)
 
@@ -58,6 +65,11 @@ class APIUserRegistrationTestCase(ApiBaseTestCase):
         self.register_user(create_user, status.HTTP_400_BAD_REQUEST)
 
         self.get_credentials("admin")
+
+    def test_register_with_missing_email(self):
+        create_user = {"password": "passhere3"}
+        self.get_credentials(username='admin')
+        self.register_user(create_user, status.HTTP_400_BAD_REQUEST)
 
 
 class ApiAssignCreateRoleTestcase(APIUserRegistrationTestCase):

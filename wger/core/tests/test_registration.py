@@ -139,14 +139,10 @@ class RegistrationTestCaseRest(WorkoutManagerTestCase):
         self.user_login()
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        test_data = dict(username='test_user', email='test@gmail.com',
+        test_data = dict(username='test_user23', email='test@gmail.com',
                          password='pAss!w@rd')
         response = self.client.post(url, data=test_data)
         self.assertEqual(response.status_code, 201)
-
-        # Test username exists
-        response1 = self.client.post(url, data=test_data)
-        self.assertEqual(response1.status_code, 400)
 
         # test no data
         response = self.client.post(url, data={})
