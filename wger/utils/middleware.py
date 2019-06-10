@@ -64,7 +64,7 @@ def get_user(request):
         # Django didn't find a user, so create one now
         if settings.WGER_SETTINGS['ALLOW_GUEST_USERS'] and \
                 request.method == 'GET' and \
-                create_user and not user.is_authenticated():
+                create_user and not user.is_authenticated:
 
             logger.debug('creating a new guest user now')
             user = create_temporary_user()
@@ -80,8 +80,10 @@ class WgerAuthenticationMiddleware(object):
     a new user with a temporary flag if the user hits certain URLs that need
     a logged in user
     '''
+    def __init__(self, get_response):
+        self.get_response = get_response
 
-    def process_request(self, request):
+    def __call__(self, request):
         assert hasattr(
             request,
             'session'), "The Django authentication middleware requires "
@@ -90,6 +92,9 @@ class WgerAuthenticationMiddleware(object):
         "'django.contrib.sessions.middleware.SessionMiddleware'."
 
         request.user = SimpleLazyObject(lambda: get_user(request))
+        response = self.get_response(request)
+
+        return response
 
 
 class RobotsExclusionMiddleware(object):
@@ -97,8 +102,11 @@ class RobotsExclusionMiddleware(object):
     Simple middleware that sends the "X-Robots-Tag" tag for the URLs used in
     our WgerAuthenticationMiddleware so that those pages are not indexed.
     '''
+    def __init__(self, get_response):
+        self.get_response = get_response
 
-    def process_response(self, request, response):
+    def __call__(self, request):
+        response = self.get_response(request)
         # Don't set it if it's already in the response
         if check_current_request(request) and response.get(
                 'X-Robots-Tag', None) is None:
@@ -116,8 +124,12 @@ class JavascriptAJAXRedirectionMiddleware(object):
     form was called via the JS function wgerFormModalDialog() and no errors are
     present.
     '''
+    def __init__(self, get_response):
+        self.get_response = get_response
 
-    def process_response(self, request, response):
+    def __call__(self, request):
+
+        response = self.get_response(request)
 
         if request.META.get('HTTP_X_WGER_NO_MESSAGES') \
                 and b'has-error' not in response.content:

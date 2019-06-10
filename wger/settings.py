@@ -6,6 +6,7 @@ from wger.settings_global import *
 # Use 'DEBUG = True' to get more details for server errors
 DEBUG = True
 TEMPLATES[0]['OPTIONS']['debug'] = True
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 ADMINS = (
     ('Your name', 'your_email@example.com'),
@@ -39,7 +40,7 @@ SITE_URL = 'http://localhost:8000'
 
 # Path to uploaded files
 # Absolute filesystem path to the directory that will hold user-uploaded files.
-MEDIA_ROOT = '/Users/dheemonk/.local/share/wger/media'
+MEDIA_ROOT = os.path.join(ROOT_DIR, '.local/share/wger/media')
 MEDIA_URL = '/media/'
 
 # Allow all hosts to access the application. Change if used in production.
