@@ -68,7 +68,7 @@
         "model": "exercises.muscle", 
         "fields": {
             "is_front": true, 
-            "name": "Obliquus externus abdominis"
+            "name": "Obliquus Externus Abdominis"
         }
     }, 
     {
@@ -125,6 +125,30 @@
         "fields": {
             "is_front": false, 
             "name": "Triceps brachii"
+        }
+    },
+    {
+        "pk": 17,
+        "model": "exercises.muscle",
+        "fields": {
+            "is_front": false,
+            "name": "Lateral Deltoid"
+        }
+    },
+    {
+        "pk": 20,
+        "model": "exercises.muscle",
+        "fields": {
+            "is_front": true,
+            "name": "Forearms"
+        }
+    },
+    {
+        "pk": 19,
+        "model": "exercises.muscle",
+        "fields": {
+            "is_front": false,
+            "name": "Posterious Deltoid"
         }
     }
 ]

@@ -540,6 +540,8 @@ class WorkoutManagerAccessTestCase(WorkoutManagerTestCase):
                 #     # The page we are redirected to doesn't trigger an error
                 response = self.client.get(response['Location'])
                 self.assertEqual(response.status_code, 404)
+        else:
+            self.assertEqual(response.status_code, 200)
 
     def test_access_anonymous(self):
         '''
