@@ -1,0 +1,30 @@
+{
+  "name": "wg-baqi",
+  "description": "Self hosted FLOSS fitness/workout and weight tracker",
+  "main": "",
+  "authors": [
+    "wangonya <kwangonya@gmail.com>"
+  ],
+  "license": "AGPL-3.0",
+  "homepage": "https://github.com/andela/wg-baqi",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "wger/core/static/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "components-font-awesome": "4.4.0",
+    "Sortable": "sortablejs#1.4.x",
+    "metrics-graphics": "^2.15.6",
+    "bootstrap": "3.3.2",
+    "datatables": "DataTables#^1.10.19",
+    "tinymce": "tinymce-dist#^5.0.6",
+    "devbridge-autocomplete": "1.2.x",
+    "shariff": "1.24.0",
+    "jquery": "2.1.x",
+    "popper.js": "^1.15.0"
+  }
+}
