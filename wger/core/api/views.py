@@ -16,10 +16,9 @@
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth.models import User
-from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
-
+from rest_framework import viewsets
 from wger.core.models import (
     UserProfile,
     Language,
@@ -135,24 +134,30 @@ class UserCreationViewSet(viewsets.ModelViewSet):
     permission_classes = (CreateUserApiPermission,)
     queryset = User.objects.all()
 
-    def user_create(self, request):
-        '''
-        Create user via API
-        '''
+    def create(self, request):
+        """Create User via api."""
 
-        user_ = UserProfile.objects.get(user=self.request.user)
+        data = request.data
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
 
-        user_ and user_.create_user
-        serialized = self.get_serializer(data=self.request.data)
-        if sezialized.is_valid():
-            username = serialized.data['username']
-            email = serialized.data['email']
-            password = self.request.data['password']
+        user = User()
+        user.username = serializer.data['username']
+        user.email = serializer.data['email']
+        user.set_password(data['password'])
+        # try:
+        user.save()
+        # except Exception:
+        #     return Response({
+        #         "message": "User already exists"
+        #     }, 409)
 
-            new_user = User.objects.create_user_via_api(email=email,
-                                                        username=username,
-                                                        password=password)
-            new_user.save()
+        user_profile = UserProfile.objects.get(user=user)
+        user_profile.created_by = request.user.username
+        user_profile.save()
 
-            return Response({"message": "User created successfully"},
-                            status.HTTP_201_CREATED)
+        return Response({
+            "username": user.username,
+            "email": user.email,
+            "message": "User was successfully created"
+        }, 201)

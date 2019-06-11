@@ -91,8 +91,34 @@ class UserCreationSerializer(serializers.ModelSerializer):
     '''
     Create User Serializer
     '''
+    username = serializers.CharField(max_length=255, min_length=4)
+    email = serializers.EmailField(max_length=255)
+    password = serializers.CharField(max_length=128, min_length=6,
+                                     write_only=True)
 
     class Meta:
         model = User
         fields = ('username', 'email', 'password', )
         extra_kwargs = {'password': {'write_only': True}}
+
+    def validate(self, data):
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+
+        if not username or not email:
+            raise serializers.ValidationError(
+                'Username and email is required.'
+            )
+
+        if not password:
+            raise serializers.ValidationError(
+                'Password is required.'
+            )
+        data = {
+            'username': username,
+            'email': email,
+            'password': password,
+        }
+
+        return data
