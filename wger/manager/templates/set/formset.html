@@ -1,6 +1,35 @@
 {% load wger_extras %}
 {% load i18n %}
+{% load staticfiles %}
+
+{% block header %}
+<script src="{% static 'dropset.js' %}"></script>
+{% endblock %}
+
+
 <div id="formset-exercise-{{exercise.id}}" style="margin-top: 1em;">
+<form>
+  <div class="form-row">
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">Percentage Drop</label>
+        <select class="form-control" id="percentage-change" placeholder="Percentage drop">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+        </select>
+    </div>
+    <div class="form-group col-md-6">
+      <label for="inputPassword4">Cycles</label>
+      <input type="number" class="form-control" id="cycle-num" min="10" value="10" onchange="setCycle(value)" placeholder="10">
+    </div>
+    <div class="form-group col-md-6">
+      <label for="inputPassword4">Weight</label>
+      <input type="number" class="form-control" id="weight-num" min="10" value="10" onchange="setWeight(value)" placeholder="10">
+    </div>
+  </div>
+  <button type="button" class="btn btn-primary" id="hide-btn" onclick="calcDrops()">Calculate Dropset</button>
+</form>
 <div class="row">
     <div class="col-md-offset-2 col-md-10">
         <label class="control-label">
