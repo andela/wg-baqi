@@ -1,5 +1,6 @@
 {% load wger_extras %}
 {% load i18n %}
+{% load staticfiles %}
 <div id="formset-exercise-{{exercise.id}}" style="margin-top: 1em;">
 <div class="row">
     <div class="col-md-offset-2 col-md-10">
@@ -70,4 +71,5 @@
     </div>
 </div>
 {% endfor %}
+<script src="{% static 'dropset.js' %}"></script>
 </div>

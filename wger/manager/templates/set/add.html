@@ -3,14 +3,13 @@
 {% load staticfiles %}
 {% load wger_extras %}
 
-
 <!--
         Title
 -->
-
-{% block title %}{% with day_name=day.description %}{% blocktrans %}Add exercises to day "{{day_name}}"{% endblocktrans %}{% endwith %}{% endblock %}
-
-
+{% block title %}
+<link rel="stylesheet" type="text/css" href="{% static 'dropset.css' %}">
+{% with day_name=day.description %}
+{% blocktrans %}Add exercises to day "{{day_name}}"{% endblocktrans %}{% endwith %}{% endblock %}
 <!--
         Header
 -->
@@ -22,13 +21,10 @@ function wgerCustomPageInit()
 }
 </script>
 {% endblock %}
-
 <!--
         Main Content
 -->
 {% block content %}
-
-
 <form action="{{form_action}}"
       method="post"
       class="form-horizontal">
@@ -51,7 +47,6 @@ function wgerCustomPageInit()
         </div>
     </div>
 
-
     <div class="form-group">
         <label class="col-md-3 control-label">
             {% trans "Repetitions" %}
@@ -62,6 +57,50 @@ you can just enter one value: e.g. for 4 sets just enter one "10" for the repeti
 automatically becomes "4 x 10".{% endblocktrans %}</span>
         </div>
     </div>
+    <div onclick="revealSettings()">
+        Drop Set: <input type="checkbox" id="set-check">
+    </div>
+
+    <div class="form-group set-items">
+        <div id="set-items-details">
+        <span class="help-block">
+        {% blocktrans %}
+            Drop sets are a great way to increase muscle mass.<br/>
+            <strong>Percentage</strong> - Drop the weight by a percentage.<br/>
+            <strong>Cycles</strong> - Number of cycles on the same weight.<br/>
+            <strong>Weight</strong> -  Size of weight to start with.<br/>
+        {% endblocktrans %}
+        </span>
+        </div>
+        <div id="drop-set-options">
+          <div class="form-row">
+            <div class="form-group">
+                <label for="percentage-change">Percentage Drop</label>
+                <select class="form-control" id="percentage-change" placeholder="Percentage drop">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                </select>
+            </div><br/>
+            <div class="form-group">
+                <label for="cycle-num">Cycles</label>
+                <input type="number" class="form-control" id="cycle-num" 
+                min="10" value="10" onchange="setCycle(value)" placeholder="10">
+            </div>
+            <div class="form-group">
+                <label for="weight-num">Weight</label>
+                <input type="number" class="form-control" id="weight-num" min="10"
+                 value="10" onchange="setWeight(value)" placeholder="10">
+            </div><br/>
+            </div>
+            <button type="button" class="btn btn-primary" 
+            id="hide-btn" onclick="calcDrops()">Calculate Dropset</button>
+            <button class="btn btn-primary warn-message" id="grey-btn">Calculate Dropset</button>
+            <p class="warn-message" id="warn-message-id">Invalid input!</p>
+        </div>
+    </div>
+
     <div class="form-group">
     <div class="col-md-12">
         <div id="formsets">
@@ -71,8 +110,6 @@ automatically becomes "4 x 10".{% endblocktrans %}</span>
         </div>
     </div>
     </div>
-
-
     {% render_form_submit %}
 </form>
 {% endblock %}

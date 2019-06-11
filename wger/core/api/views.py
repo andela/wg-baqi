@@ -21,6 +21,7 @@ from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework import viewsets, generics, response, status
 from rest_framework.decorators import detail_route
+from rest_framework import viewsets
 from wger.core.models import (
     UserProfile,
     Language,
