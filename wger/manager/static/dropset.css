@@ -1,0 +1,19 @@
+#set-items-details{
+    margin-left: 25%;
+}
+
+#drop-set-options{
+    max-width: 45%;
+    margin: auto;
+}
+
+.set-items{
+    display: none;
+}
+.warn-message{
+    display: none;
+}
+
+#grey-btn{
+    background-color: grey;
+}
