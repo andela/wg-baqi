@@ -135,6 +135,88 @@ class BaseTestCase(object):
         self.media_root = tempfile.mkdtemp()
         settings.MEDIA_ROOT = self.media_root
 
+        ac_token = os.getenv('TEST_ACCESS_TOKEN')
+        sec_token = os.getenv('TEST_SECRET_TOKEN')
+
+        # testing with twitter as login keys don't expire
+        self.twitter_user = {
+            "provider": "twitter",
+            "access_token": ac_token,
+            "access_token_secret": sec_token,
+        }
+
+        self.invalid_access_token = {
+            "provider": "twitter",
+            "access_token": "1135833542037069824-0sCSpHhFWD7WO5KXfgh9CZFUkT",
+            "access_token_secret": sec_token
+        }
+
+        self.missing_access_field = {
+            "provider": "twitter",
+            "access_token_secret": sec_token
+        }
+        self.missing_twitter_secret_field = {
+            "provider": "twitter",
+            "access_token_secret": sec_token
+        }
+
+        self.invalid_secret_token = {
+            "provider": "twitter",
+            "access_token": ac_token,
+            "access_token_secret": "3BXBbxfxb88AdsuqFRltR19dIoU9A6Thkvn14CBl"
+        }
+
+        self.unsupported_provider = {
+            "provider": "amazon",
+            "access_token": ac_token,
+        }
+
+        self.missing_token_access = {
+            "provider": "twitter",
+            "access_token": "",
+            "access_token_secret": sec_token,
+        }
+
+        self.missing_provider = {
+            "provider": "",
+            "access_token": "3BXBbxfxb88AdsuqFRltR19dIoU9A6Thkvn14CBlH5dmS"
+        }
+
+        self.missing_token_secret = {
+            "provider": "twitter",
+            "access_token": ac_token,
+            "access_token_secret": "",
+        }
+
+        self.missing_provider_field = {
+            "access_token": ac_token,
+            "access_token_secret": "",
+        }
+
+        self.correct_login = {
+            "username": "testperms",
+            "email": "testperms@perms.com",
+            "password": "adminuser"
+        }
+
+        self.email_login = {
+            "email": "mytestuserzon@example.com",
+            "password": "somedummypass"
+        }
+
+        self.no_email_or_username = {
+            "password": "admin"
+        }
+
+        self.invalid_creds = {
+            "username": "admin",
+            "password": "adminfakepass"
+        }
+
+        self.no_pass = {
+            "email": "admin"
+        }
+
     def tearDown(self):
         '''
         Reset settings

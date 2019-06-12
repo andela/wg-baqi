@@ -19,8 +19,10 @@ from wger.core.models import UserProfile
 from wger.core.forms import RegistrationForm
 from wger.core.forms import RegistrationFormNoCaptcha
 from wger.core.tests.base_testcase import WorkoutManagerTestCase
+from rest_framework import status
 
 logger = logging.getLogger(__name__)
+LOGIN_URL = '/social/user-login/'
 
 
 class RegistrationTestCase(WorkoutManagerTestCase):
@@ -144,6 +146,10 @@ class RegistrationTestCaseRest(WorkoutManagerTestCase):
         response = self.client.post(url, data=test_data)
         self.assertEqual(response.status_code, 201)
 
+        # test user exisst
+        response = self.client.post(url, data=test_data)
+        self.assertEqual(response.status_code, 409)
+
         # test no data
         response = self.client.post(url, data={})
         self.assertEqual(response.status_code, 400)
@@ -180,3 +186,46 @@ class RegistrationTestCaseRest(WorkoutManagerTestCase):
         response = self.client.get(url)
         User.objects.all()
         self.assertEqual(response.status_code, 200)
+
+
+class TestNormalLoginAPI(WorkoutManagerTestCase):
+    """Tests for normal email or username API login."""
+
+    def test_successful_login(self):
+        """Test login succesfully."""
+        url = '/api/v2/signup/'
+        self.user_login()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(url, data=self.correct_login)
+        self.assertEqual(response.status_code, 201)
+        res = self.client.post(LOGIN_URL, {
+            "username": "testperms",
+            "password": "adminuser"
+        })
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        res = self.client.post(LOGIN_URL, {
+            "email": "testperms@perms.com",
+            "password": "adminuser"
+        })
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('token', res.data)
+
+
+    def test_login_no_email_or_username(self):
+        """Test missing Username and email fields."""
+        res = self.client.post(LOGIN_URL, self.no_email_or_username)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_missing_password(self):
+        """Test when no password is provided."""
+        res = self.client.post(LOGIN_URL, self.no_pass)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_invalid_login_creadentials(self):
+        """Test if provided credentials are false."""
+        res = self.client.post(LOGIN_URL, self.invalid_creds)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+        res = self.client.post(LOGIN_URL, self.email_login)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
