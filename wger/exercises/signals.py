@@ -16,14 +16,34 @@
 
 
 from django.db.models.signals import pre_save
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from easy_thumbnails.files import get_thumbnailer
 from easy_thumbnails.signal_handlers import generate_aliases
 from easy_thumbnails.signals import saved_file
 
-from wger.exercises.models import ExerciseImage
+from wger.exercises.models import ExerciseImage, Muscle
+from wger.core.models import Language
+from wger.utils.cache import (
+    delete_template_fragment_cache,
+)
 
+
+@receiver(post_save, sender=Muscle)
+def delete_muscle_overview_template(sender, instance, **kwargs):
+    '''
+    Deletes muscle overview template in all languages
+    '''
+    for language in Language.objects.all():
+        delete_template_fragment_cache('muscle-overview', language.id)
+
+@receiver(post_delete, sender=Muscle)
+def delete_muscle_template(sender, instance, **kwargs):
+    '''
+    Clear cache on delete
+    '''
+    for language in Language.objects.all():
+        delete_template_fragment_cache('muscle-overview', language.id)
 
 @receiver(post_delete, sender=ExerciseImage)
 def delete_exercise_image_on_delete(sender, instance, **kwargs):
