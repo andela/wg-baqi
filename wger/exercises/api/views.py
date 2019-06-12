@@ -23,6 +23,7 @@ from rest_framework.decorators import detail_route, api_view
 
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
+from django.shortcuts import get_object_or_404
 
 from django.utils.translation import ugettext as _
 
@@ -47,7 +48,7 @@ from wger.utils.language import load_item_languages, load_language
 from wger.utils.permissions import CreateOnlyPermission
 
 
-class ExerciseViewSet(viewsets.ModelViewSet):
+class ExerciseViewSet(viewsets.ViewSet):
     '''
     API endpoint for exercise objects
     '''
@@ -77,8 +78,14 @@ class ExerciseViewSet(viewsets.ModelViewSet):
         obj.set_author(self.request)
         obj.save()
 
-    def get_queryset(self, *args, **kwargs):
-        return Exercise.objects.filter(id=self.kwargs.get('pk'))
+    def list(self, request):
+        serializer = ExerciseSerializer(self.queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        exercise = get_object_or_404(self.queryset, pk=pk)
+        serializer = ExerciseSerializer(exercise)
+        return Response(serializer.data)
 
 
 @api_view(['GET'])
