@@ -20,7 +20,6 @@ from django.contrib.auth.mixins import PermissionRequiredMixin, \
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
-
 from django.views.generic import (
     ListView,
     DeleteView,
@@ -48,6 +47,10 @@ class MuscleListView(ListView):
     context_object_name = 'muscle_list'
     template_name = 'muscles/overview.html'
 
+    def get_queryset(self):
+        queryset = Muscle.objects.all().order_by('-is_front', 'name')
+        return queryset,
+
     def get_context_data(self, **kwargs):
         '''
         Send some additional data to the template
@@ -61,7 +64,7 @@ class MuscleListView(ListView):
 
 
 class MuscleAdminListView(LoginRequiredMixin,
-                          PermissionRequiredMixin, MuscleListView):
+                          PermissionRequiredMixin, ListView):
     '''
     Overview of all muscles, for administration purposes
     '''
