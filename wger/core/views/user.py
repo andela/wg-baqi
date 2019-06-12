@@ -199,7 +199,7 @@ def logout(request):
     '''
     user = request.user
     django_logout(request)
-    if user.is_authenticated() and user.userprofile.is_temporary:
+    if user.is_authenticated and user.userprofile.is_temporary:
         user.delete()
     return HttpResponseRedirect(reverse('core:user:login'))
 

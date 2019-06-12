@@ -22,6 +22,7 @@ from django.conf.urls import (
 from django.views.generic import TemplateView
 from django.contrib.auth import views
 from django.urls import reverse_lazy
+from django.contrib.auth.views import LoginView
 
 from wger.core.views import (
     user,
@@ -54,7 +55,7 @@ patterns_language = [
 # sub patterns for user
 patterns_user = [
     url(r'^login$',
-        user.login,
+         LoginView.as_view(template_name='user/login.html'),
         name='login'),
     url(r'^logout$',
         user.logout,
