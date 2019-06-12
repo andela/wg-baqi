@@ -112,6 +112,11 @@ class NutritionPlan(models.Model):
         '''
         Sums the nutritional info of all items in the plan
         '''
+
+        cached_plans = cache.get(str(self.id))
+        if cached_plans:
+            return cached_plans
+
         use_metric = self.user.userprofile.use_metric
         unit = 'kg' if use_metric else 'lb'
         result = {'total': {'energy': 0,
@@ -157,6 +162,7 @@ class NutritionPlan(models.Model):
             for i in result[key]:
                 result[key][i] = Decimal(result[key][i]).quantize(TWOPLACES)
 
+        cache.set(str(self.id), result)
         return result
 
     def get_closest_weight_entry(self):
