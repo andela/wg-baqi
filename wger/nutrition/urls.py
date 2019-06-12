@@ -86,6 +86,9 @@ patterns_meal_item = [
     url(r'^(?P<item_id>\d+)/delete/$',
         meal_item.delete_meal_item,
         name='delete'),
+    url(r'^(?P<plan_pk>\d+)/meal/add/$',
+        login_required(meal_item.MealItemCreateView.as_view()),
+        name='add-meal'),
 ]
 
 
