@@ -244,7 +244,7 @@ def migrate_db(context, settings_path=None):
 
     # Find the path to the settings and setup the django environment
     setup_django_environment(settings_path)
-
+    call_command("createcachetable")
     call_command("migrate")
 
 
