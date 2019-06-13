@@ -217,6 +217,9 @@ class BaseTestCase(object):
             "email": "admin"
         }
 
+        self.code = {'code': '80b5a817c2b1d8fb2081db8d31d870446828017'}
+        self.call_back_weight = settings.SITE_URL + reverse('core:user:fitbit')
+
     def tearDown(self):
         '''
         Reset settings

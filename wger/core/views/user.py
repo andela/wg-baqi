@@ -13,11 +13,17 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-
+import os
 import logging
+import datetime
+import base64
+import requests
+import fitbit
 
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import (HttpResponseRedirect,
+                         HttpResponseForbidden,
+                         Http404,)
 from django.template.context_processors import csrf
 from django.urls import reverse
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -38,6 +44,7 @@ from django.views.generic import (
     ListView
 )
 from django.conf import settings
+
 from rest_framework.authtoken.models import Token
 
 from wger.utils.constants import USER_TAB
@@ -321,6 +328,82 @@ def preferences(request):
         return HttpResponseRedirect(reverse('core:user:preferences'))
     else:
         return render(request, 'user/preferences.html', template_data)
+
+
+@login_required
+def sync_fitbit(request):
+    """Authorizes the connection with Wger
+
+    """
+
+    if settings.WGER_SETTINGS['FITBIT_CLIENT_ID'] is None:
+        raise Http404("Fitbit not configured correctly to sync")
+
+    fitbit_id = settings.WGER_SETTINGS['FITBIT_CLIENT_ID']
+    fitbit_secretkey = settings.WGER_SETTINGS['FITBIT_CLIENT_SECRET']
+
+    # Implement the OAuth2 authorization flow
+    fitbit_auth_client = fitbit.FitbitOauth2Client(fitbit_id, fitbit_secretkey)
+
+    weight_template = {}
+
+    if 'code' in request.GET:
+        code = request.GET.get('code', '')
+
+        form = {
+            'client_secret': fitbit_secretkey,
+            'code': code,
+            'client_id': fitbit_id,
+            'grant_type': 'authorization_code',
+            'redirect_uri': os.getenv('ROOT_URL')+'/en/user/sync_fitbit/'
+        }
+
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            "Authorization": 'Basic ' + base64.b64encode(
+                fitbit_id.encode() + b':' + fitbit_secretkey.encode()).decode()
+        }
+
+        response = requests.post(
+            fitbit_auth_client.request_token_url, form, headers=headers).json()
+
+        if "access_token" in response:
+            token = response['access_token']
+            headers['Authorization'] = 'Bearer ' + token
+            date = (datetime.date.today()).strftime('%Y-%m-%d')
+
+            response = requests.get(
+                'https://api.fitbit.com/1/user/-/body/log/weight/date/' + date + '.json',
+                headers=headers)
+
+            weight_template.update({})
+
+            weight = response.json()['weight']
+
+            try:
+                entry = WeightEntry(user=request.user,
+                                    weight=weight[0]['weight'],
+                                    date=date)
+                entry.save()
+                messages.success(request, _(
+                    "Successfully synced today's data"))
+            except Exception as error:
+                if "UNIQUE constraint failed" in str(error):
+                    messages.info(request, _('Data already synced.'))
+                else:
+                    messages.info(request, _('No data to sync'))
+
+            return HttpResponseRedirect(reverse('weight:overview',
+                                                kwargs={
+                                                    'username': request.user.username}))
+
+    template_data = {}
+    authorization_url = fitbit_auth_client.authorize_token_url(
+        redirect_uri=os.getenv('ROOT_URL')+'/en/user/sync_fitbit/'
+    )[0]
+    template_data.update({
+        'authorize': authorization_url})
+    return render(request, 'user/add_fitbit.html', template_data)
 
 
 class UserDeactivateView(LoginRequiredMixin,
