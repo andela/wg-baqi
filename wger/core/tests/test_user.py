@@ -14,6 +14,8 @@
 
 import datetime
 
+from mock import patch
+
 from django.contrib.auth.models import Permission
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -23,6 +25,7 @@ from wger.core.models import UserProfile
 from wger.core.tests.base_testcase import WorkoutManagerTestCase
 from wger.gym.models import Gym
 from wger.gym.models import GymAdminConfig
+from wger.weight.models import WeightEntry
 
 
 class GymAddUserTestCase(WorkoutManagerTestCase):
@@ -257,3 +260,22 @@ class TrainerLogoutTestCase(WorkoutManagerTestCase):
         self.client.get(reverse('core:user:trainer-login',
                                 kwargs={'user_pk': 1}))
         self.assertFalse(self.client.session.get('trainer.identity'))
+
+
+class FitbitSyncTestCase(WorkoutManagerTestCase):
+    '''
+    Test fitbit integration.
+    '''
+
+    @patch('wger.core.views.user.sync_fitbit')
+    def test_sync_fitbit_weight(self, mock_fitbit_data):
+        initial_weight_entry_count = WeightEntry.objects.count()
+        user_info = {"user": {"weight": 70}}
+        mock_fitbit_data.return_value = user_info
+        self.user_login(user='admin')
+        self.client.get(reverse('core:user:fitbit'),
+                        data=self.code)
+
+        final_weight_entry_count = WeightEntry.objects.count()
+        self.assertEqual((
+            final_weight_entry_count - initial_weight_entry_count), 0)
