@@ -161,3 +161,47 @@ class MealApiTestCase(api_base_test.ApiBaseResourceTestCase):
     data = {'time': datetime.time(9, 2),
             'plan': 4,
             'order': 1}
+
+
+class DeleteMealTestCase(WorkoutManagerTestCase):
+    '''
+    Tests deleting meal
+    '''
+
+    def test_only_owner_can_delete_meal(self):
+        '''
+        Tests only meal owner can delete it
+        Non-owner is forbidden so 403 should be returned
+        '''
+
+        self.user_login('test')
+
+        url = reverse('nutrition:meal:delete',
+                      kwargs={'id': 5})
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+        self.user_logout()
+
+        # check to confirm meal plan was not deleted
+        response = Meal.objects.filter(pk=5).exists()
+        self.assertEqual(response, True)
+
+    def test_delete_meal(self):
+        '''
+        Tests deleting a meal
+        It redirects on success so 302 should be returned
+        '''
+        self.user_login('admin')
+
+        url = reverse('nutrition:meal:delete', kwargs={'id': 5})
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+
+        self.user_logout()
+
+        # check to confirm meal plan was deleted
+        response = Meal.objects.filter(pk=5).exists()
+        self.assertEqual(response, False)
