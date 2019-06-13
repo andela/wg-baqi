@@ -128,6 +128,9 @@ class MealItemForm(forms.ModelForm):
         required=False)
     ingredient = forms.ModelChoiceField(queryset=Ingredient.objects.all(),
                                         widget=forms.HiddenInput)
+    time = forms.TimeField(required=False,
+                           label=_('Time'),
+                           widget=forms.TimeInput)
 
     class Meta:
         model = MealItem

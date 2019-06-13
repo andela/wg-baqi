@@ -62,6 +62,34 @@ class AddMealTestCase(WorkoutManagerAddTestCase):
     user_fail = 'admin'
 
 
+class AddNewMealTestCase(WorkoutManagerTestCase):
+    '''
+    Tests adding a Meal and meal item at the same time
+    '''
+
+    def test_add_new_meal(self):
+        self.user_login('admin')
+
+        url = reverse('nutrition:meal_item:add-meal',
+                      kwargs={'plan_pk': 5})
+        data = {'amount': 1,
+                'ingredient': 1,
+                'weight_unit': 1,
+                'time': datetime.time(9, 5)}
+
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)  # redirects on success
+
+        # check view to confirm meal plan was posted
+        response = self.client.get(
+            reverse('nutrition:plan:view', kwargs={'id': 5})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '09:05')
+
+        self.user_logout()
+
+
 class PlanOverviewTestCase(WorkoutManagerTestCase):
     '''
     Tests the nutrition plan overview
