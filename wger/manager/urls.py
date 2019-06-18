@@ -112,6 +112,12 @@ patterns_workout = [
     url(r'^(?P<day_pk>\d+)/timer$',
         workout.timer,
         name='timer'),
+    url(r'^(?P<id>\d+)/export-json$',
+        workout.export_json,
+        name='export_json'),
+    url(r'^import-json$',
+        workout.import_json,
+        name='import_json'),
 ]
 
 

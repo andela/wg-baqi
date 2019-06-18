@@ -13,8 +13,13 @@
 # You should have received a copy of the GNU Affero General Public License
 
 import datetime
+import json
 
 from django.urls import reverse
+from django.test import Client
+from django.contrib.auth.models import User
+from unittest.mock import patch
+from open_file_mock import MockOpen, DEFAULTS_MOCK
 
 from wger.core.tests import api_base_test
 from wger.core.tests.base_testcase import WorkoutManagerDeleteTestCase
@@ -202,3 +207,75 @@ class WorkoutApiTestCase(api_base_test.ApiBaseResourceTestCase):
     private_resource = True
     special_endpoints = ('canonical_representation',)
     data = {'comment': 'A new comment'}
+
+
+class WorkoutExportImportTestCase(WorkoutManagerTestCase):
+    '''
+    Tests exporting importing json
+    '''
+
+    def export_json(self):
+        '''
+        Export a workout as JSON for testing
+        '''
+        self.user_login('admin')
+        response = self.client.get(reverse('manager:workout:export_json',
+                                           kwargs={'id': 1}))
+        return response
+
+    def test_export_json(self):
+        self.user_login('admin')
+        response = self.export_json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response['Content-Disposition'],
+                         'attachment; filename="{}.json"'
+                         .format(response.json()['description']))
+
+    def test_import_json(self):
+        '''
+        Test for importing a workout as JSON
+        '''
+        self.user_login('admin')
+        res = self.client.get(reverse('manager:workout:overview'))
+        self.assertEqual(res.status_code, 200)
+        self.assertNotContains(res, 'imported')
+
+        with patch('builtins.open', new_callable=MockOpen) as open_mock:
+            open_mock.default_behavior = DEFAULTS_MOCK
+            open_mock.set_read_data_for('/tmp/f1', self.export_json().json())
+            c = Client()
+            user = User.objects.get(username='admin')
+            c.force_login(user)
+            with open('/tmp/f1') as valid_data:
+                c.post(reverse('manager:workout:import_json'),
+                             {"data": valid_data})
+
+        res = self.client.get(reverse('manager:workout:overview'))
+        self.assertEqual(res.status_code, 200)
+        self.assertContains(res, 'imported')
+
+    def test_import_invalid_json(self):
+        '''
+        Test for importing invalid JSON
+        '''
+        self.user_login('admin')
+        res = self.client.get(reverse('manager:workout:overview'))
+        self.assertEqual(res.status_code, 200)
+        self.assertNotContains(res, 'imported')
+
+        with patch('builtins.open', new_callable=MockOpen) as open_mock:
+            open_mock.default_behavior = DEFAULTS_MOCK
+            open_mock.set_read_data_for('/tmp/f1', "bad data")
+            c = Client()
+            user = User.objects.get(username='admin')
+            c.force_login(user)
+            with open('/tmp/f1') as valid_data:
+                c.post(reverse('manager:workout:import_json'),
+                       {"data": valid_data})
+
+        res = self.client.get(reverse('manager:workout:overview'))
+        self.assertEqual(res.status_code, 200)
+        self.assertNotContains(res, 'imported')
+
+        self.user_logout()

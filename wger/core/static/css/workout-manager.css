@@ -292,3 +292,11 @@ div.info a, div.info a:hover, div.info a:active{
 #shoutout h2:first-child {
     margin-top: 0;
 }
+
+/**************************************************************
+ * Import workout error message
+ **************************************************************/
+.alert-error {
+    color: #721c24;
+    background-color: #f8d7da;
+}

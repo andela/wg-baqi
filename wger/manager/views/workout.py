@@ -17,38 +17,29 @@
 import logging
 import uuid
 import datetime
+import json
+import ast
 
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.contrib import messages
+from django.http import (HttpResponseRedirect, HttpResponseForbidden,
+                         HttpResponse, )
 from django.template.context_processors import csrf
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DeleteView, UpdateView
+from rest_framework.response import Response
+from rest_framework import status
 
-from wger.core.models import (
-    RepetitionUnit,
-    WeightUnit
-)
-from wger.manager.models import (
-    Workout,
-    WorkoutSession,
-    WorkoutLog,
-    Schedule,
-    Day
-)
-from wger.manager.forms import (
-    WorkoutForm,
-    WorkoutSessionHiddenFieldsForm,
-    WorkoutCopyForm
-)
-from wger.utils.generic_views import (
-    WgerFormMixin,
-    WgerDeleteMixin
-)
+from wger.core.models import (RepetitionUnit, WeightUnit, DaysOfWeek, )
+from wger.manager.models import (Workout, WorkoutSession, WorkoutLog,
+                                 Schedule, Day, Exercise, Setting, Set, )
+from wger.manager.forms import (WorkoutForm, WorkoutSessionHiddenFieldsForm,
+                                WorkoutCopyForm)
+from wger.utils.generic_views import (WgerFormMixin, WgerDeleteMixin)
 from wger.utils.helpers import make_token
-
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +88,8 @@ def view(request, pk):
                 'images/muscles/main/muscle-{0}.svg'.format(i))
     for i in canonical['muscles']['back']:
         if i not in muscles_back:
-            muscles_back.append('images/muscles/main/muscle-{0}.svg'.format(i))
+            muscles_back.append(
+                'images/muscles/main/muscle-{0}.svg'.format(i))
 
     for i in canonical['muscles']['frontsecondary']:
         if i not in muscles_front and i not in canonical['muscles']['front']:
@@ -191,8 +183,8 @@ def copy_workout(request, pk):
                             setting_copy.set = current_set_copy
                             setting_copy.save()
 
-            return HttpResponseRedirect(reverse('manager:workout:view',
-                                                kwargs={'pk': workout.id}))
+            return HttpResponseRedirect(
+                reverse('manager:workout:view', kwargs={'pk': workout.id}))
     else:
         workout_form = WorkoutCopyForm({'comment': workout.comment})
 
@@ -200,13 +192,12 @@ def copy_workout(request, pk):
         template_data.update(csrf(request))
         template_data['title'] = _('Copy workout')
         template_data['form'] = workout_form
-        template_data['form_action'] = reverse(
-            'manager:workout:copy', kwargs={'pk': workout.id})
+        template_data['form_action'] = reverse('manager:workout:copy',
+                                               kwargs={'pk': workout.id})
         template_data['form_fields'] = [workout_form['comment']]
         template_data['submit_text'] = _('Copy')
         template_data[
-            'extend_template'
-        ] = 'base_empty.html' if request.is_ajax() else 'base.html'
+            'extend_template'] = 'base_empty.html' if request.is_ajax() else 'base.html'
 
         return render(request, 'form.html', template_data)
 
@@ -235,8 +226,8 @@ class WorkoutDeleteView(WgerDeleteMixin, LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super(WorkoutDeleteView, self).get_context_data(**kwargs)
-        context['form_action'] = reverse(
-            'manager:workout:delete', kwargs={'pk': self.object.id})
+        context['form_action'] = reverse('manager:workout:delete',
+                                         kwargs={'pk': self.object.id})
         context['title'] = _(u'Delete {0}?').format(self.object)
 
         return context
@@ -284,8 +275,8 @@ class LastWeightHelper:
                                                  exercise=exercise,
                                                  reps=reps).order_by('-date')
             default_weight = '' if default_weight is None else default_weight
-            weight = last_log[0].weight if \
-                last_log.exists() else default_weight
+            weight = last_log[
+                0].weight if last_log.exists() else default_weight
             self.last_weight_list[key] = weight
 
         return self.last_weight_list.get(key)
@@ -304,42 +295,38 @@ def timer(request, day_pk):
     last_log = LastWeightHelper(request.user)
 
     # Go through the workout day and create the individual 'pages'
-    for set_dict in canonical_day['set_list']:
+    for set_list_dict in canonical_day['set_list']:
 
-        if not set_dict['is_superset']:
-            for exercise_dict in set_dict['exercise_list']:
+        if not set_list_dict['is_superset']:
+            for exercise_dict in set_list_dict['exercise_list']:
                 exercise = exercise_dict['obj']
                 for key, element in enumerate(exercise_dict['reps_list']):
                     reps = exercise_dict['reps_list'][key]
                     rep_unit = exercise_dict['repetition_units'][key]
                     weight_unit = exercise_dict['weight_units'][key]
-                    default_weight = last_log.get_last_weight(
-                        exercise,
-                        reps,
-                        exercise_dict['weight_list'][key])
+                    default_weight = last_log.get_last_weight(exercise, reps,
+                                                              exercise_dict[
+                                                                  'weight_list'][
+                                                                  key])
 
-                    step_list.append({'current_step': uuid.uuid4().hex,
-                                      'step_percent': 0,
-                                      'step_nr': len(step_list) + 1,
-                                      'exercise': exercise,
-                                      'type': 'exercise',
-                                      'reps': reps,
-                                      'rep_unit': rep_unit,
-                                      'weight': default_weight,
-                                      'weight_unit': weight_unit})
+                    step_list.append(
+                        {'current_step': uuid.uuid4().hex, 'step_percent': 0,
+                         'step_nr': len(step_list) + 1, 'exercise': exercise,
+                         'type': 'exercise', 'reps': reps,
+                         'rep_unit': rep_unit, 'weight': default_weight,
+                         'weight_unit': weight_unit})
                     if request.user.userprofile.timer_active:
-                        step_list.append({
-                            'current_step': uuid.uuid4().hex,
-                            'step_percent': 0,
-                            'step_nr': len(step_list) + 1,
-                            'type': 'pause',
-                            'time': request.user.userprofile.timer_pause})
+                        step_list.append({'current_step': uuid.uuid4().hex,
+                                          'step_percent': 0,
+                                          'step_nr': len(step_list) + 1,
+                                          'type': 'pause',
+                                          'time': request.user.userprofile.timer_pause})
 
         # Supersets need extra work to group the exercises and reps together
         else:
-            total_reps = len(set_dict['exercise_list'][0]['reps_list'])
+            total_reps = len(set_list_dict['exercise_list'][0]['reps_list'])
             for i in range(0, total_reps):
-                for exercise_dict in set_dict['exercise_list']:
+                for exercise_dict in set_list_dict['exercise_list']:
                     reps = exercise_dict['reps_list'][i]
                     rep_unit = exercise_dict['repetition_units'][i]
                     weight_unit = exercise_dict['weight_units'][i]
@@ -347,24 +334,18 @@ def timer(request, day_pk):
                     exercise = exercise_dict['obj']
 
                     step_list.append(
-                        {'current_step': uuid.uuid4().hex,
-                         'step_percent': 0,
-                         'step_nr': len(step_list) + 1,
-                         'exercise': exercise,
-                         'type': 'exercise',
-                         'reps': reps,
-                         'rep_unit': rep_unit,
-                         'weight_unit': weight_unit,
-                         'weight': last_log.get_last_weight(exercise,
-                                                            reps,
+                        {'current_step': uuid.uuid4().hex, 'step_percent': 0,
+                         'step_nr': len(step_list) + 1, 'exercise': exercise,
+                         'type': 'exercise', 'reps': reps,
+                         'rep_unit': rep_unit, 'weight_unit': weight_unit,
+                         'weight': last_log.get_last_weight(exercise, reps,
                                                             default_weight)})
 
                 if request.user.userprofile.timer_active:
-                    step_list.append({'current_step': uuid.uuid4().hex,
-                                      'step_percent': 0,
-                                      'step_nr': len(step_list) + 1,
-                                      'type': 'pause',
-                                      'time': 90})
+                    step_list.append(
+                        {'current_step': uuid.uuid4().hex, 'step_percent': 0,
+                         'step_nr': len(step_list) + 1, 'type': 'pause',
+                         'time': 90})
 
     # Remove the last pause step as it is not needed. If the list is empty,
     # because the user didn't add any repetitions to any exercise, do nothing
@@ -379,19 +360,18 @@ def timer(request, day_pk):
 
     # Depending on whether there is already a workout session for today, update
     # the current one or create a new one (this will be the most usual case)
-    if WorkoutSession.objects.filter(
-            user=request.user, date=datetime.date.today()).exists():
-        session = WorkoutSession.objects.get(
-            user=request.user, date=datetime.date.today())
+    if WorkoutSession.objects.filter(user=request.user,
+                                     date=datetime.date.today()).exists():
+        session = WorkoutSession.objects.get(user=request.user,
+                                             date=datetime.date.today())
         url = reverse('manager:session:edit', kwargs={'pk': session.pk})
         session_form = WorkoutSessionHiddenFieldsForm(instance=session)
     else:
         today = datetime.date.today()
-        url = reverse(
-            'manager:session:add', kwargs={'workout_pk': day.training_id,
-                                           'year': today.year,
-                                           'month': today.month,
-                                           'day': today.day})
+        url = reverse('manager:session:add',
+                      kwargs={'workout_pk': day.training_id,
+                              'year': today.year, 'month': today.month,
+                              'day': today.day})
         session_form = WorkoutSessionHiddenFieldsForm()
 
     # Render template
@@ -404,3 +384,122 @@ def timer(request, day_pk):
     context['weight_units'] = WeightUnit.objects.all()
     context['repetition_units'] = RepetitionUnit.objects.all()
     return render(request, 'workout/timer.html', context)
+
+
+def export_json(request, id):
+    '''
+    export workout data as json
+    '''
+    workout = get_object_or_404(Workout, pk=id, user=request.user)
+    if len(workout.canonical_representation['day_list']) > 0:
+        workout_details = {
+            'description': workout.canonical_representation['day_list'][0][
+                'obj'].description, 'workout_days':
+                workout.canonical_representation['day_list'][0][
+                    'days_of_week']['text']}
+
+        exercise_set = workout.canonical_representation['day_list'][0][
+            'set_list']
+
+        set_list = []
+        set_list_dict = {}
+
+        for _set in exercise_set:
+            set_list_dict['set_id'] = _set['obj'].id
+            set_list_dict['set_order'] = _set['obj'].order
+            set_list_dict['sets'] = _set['obj'].sets
+            set_list_dict['excerciseday_id'] = _set['obj'].exerciseday_id
+            set_list_dict['muscles'] = _set['muscles']
+
+            exercise_list = []
+            exercise_list_dict = {}
+
+            for exercise in _set['exercise_list']:
+                exercise_list_dict['name_of_exercise'] = exercise['obj'].name
+                exercise_list_dict['description'] = exercise[
+                    'obj'].description
+                exercise_list_dict['category_id'] = exercise[
+                    'obj'].category_id
+                exercise_list_dict['license_id'] = exercise['obj'].license_id
+                exercise_list_dict['settings_list'] = exercise['setting_list']
+                repetition_list = [repetition.name for repetition in
+                                   exercise['repetition_units']]
+                weight_units = [unit.name for unit in
+                                exercise['weight_units']]
+                exercise_list_dict['weight_units'] = weight_units
+                exercise_list_dict['repetition_list'] = repetition_list
+                exercise_list_dict['comments'] = exercise['comment_list']
+                exercise_list_dict['reps'] = exercise['setting_obj_list'][
+                    0].reps
+                exercise_list_dict['order'] = exercise['setting_obj_list'][
+                    0].order
+                exercise_list.append(exercise_list_dict)
+
+            set_list_dict['exercise_list'] = exercise_list
+            set_list.append(set_list_dict)
+
+        workout_details['set_list'] = set_list
+    else:
+        return Response(data={"error": "No data to export"},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    dataset = json.dumps(workout_details, indent=2)
+
+    response = HttpResponse(dataset, content_type='application/json')
+    if workout_details.get('description'):
+        response[
+            'Content-Disposition'] = 'attachment; filename="{}.json"'\
+            .format(workout_details['description'])
+    else:
+        response[
+            'Content-Disposition'] = 'attachment; filename="workout-{}.json"'\
+            .format(id)
+    return response
+
+
+def import_json(request):
+    '''
+    import workout data from valid json
+    '''
+    try:
+        content = request.FILES['data']
+        data = content.read()
+        if type(data) == bytes:
+            data = data.decode("utf-8")
+            data = ast.literal_eval(data)
+            data = json.dumps(data)
+        data = json.loads(data)
+        days = data['workout_days'].split(', ')
+        set_list = data['set_list']
+        workout = Workout.objects.create(user=request.user, imported=True)
+        workout.comment = data['description']
+        workout.save()
+        days_of_week = DaysOfWeek.objects.filter(day_of_week__in=days)
+        day_save = Day.objects.create(training=workout,
+                                      description=data['description'])
+        day_save.day.set(days_of_week)
+
+        for _set in set_list:
+            no_of_sets = _set['sets']
+            exercise_names = [exercise['name_of_exercise'] for exercise in
+                              _set['exercise_list']]
+            exercises = Exercise.objects.filter(name__in=exercise_names)
+            for exercise in exercises:
+                exercise_in_list = next(
+                    (item for item in _set['exercise_list'] if
+                     item['name_of_exercise'] == exercise.name), {})
+                reps = exercise_in_list.get('reps', 0)
+                order = exercise_in_list.get('order', 1)
+                day_set = Set(exerciseday=day_save, sets=no_of_sets,
+                              order=_set['set_order'])
+                day_set.save()
+                day_set.exercises.add(exercise)
+                settings = Setting(set=day_set, exercise=exercise, reps=reps,
+                                   order=order)
+                settings.save()
+        messages.success(request, 'Workout imported successfully')
+        return HttpResponseRedirect(reverse('manager:workout:overview'))
+    except Exception:
+        messages.warning(request, 'There was a problem importing your '
+                                  'workout. Please confirm JSON is valid')
+    return HttpResponseRedirect(reverse('manager:workout:overview'))

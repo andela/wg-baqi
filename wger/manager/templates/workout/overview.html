@@ -17,6 +17,12 @@
                 </span>
                 {% endif %}
 
+                {% if workout.imported %}
+                    <span class="badge">
+                        <em>{% trans "imported" %}</em>
+                    </span>
+                {% endif %}
+
                 <h4 class="list-group-item-heading">{{ workout }}</h4>
                 <p class="list-group-item-text">{{ workout.creation_date }}</p>
             </a>
@@ -30,7 +36,42 @@
 
 
 {% block options %}
-<a href="{% url 'manager:workout:add' %}" class="btn btn-success btn-sm">
-    {% trans "Add workout" %}
-</a>
+    <div class="modal fade" id="import-json-popup">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{% trans "Import workout from JSON" %}</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'manager:workout:import_json' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="data" class="col-md-6 col-md-offset-3"/>
+                        <br><br>
+                        <input type="submit" value="Import" class="btn btn-block btn-default"/>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {% trans "Add workout" %}
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="{% url 'manager:workout:add' %}">
+                    {% trans "Create new" %}
+                </a>
+            </li>
+            <li>
+                <a data-toggle="modal" data-target="#import-json-popup">
+                    {% trans "Import from json" %}
+                </a>
+            </li>
+        </ul>
+    </div>
 {% endblock %}
