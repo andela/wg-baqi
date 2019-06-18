@@ -69,6 +69,7 @@ class Workout(models.Model):
                     "example 'Focus on back' or 'Week 1 of program xy'."))
     user = models.ForeignKey(User,
                              verbose_name=_('User'), on_delete=models.CASCADE)
+    imported = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         '''
