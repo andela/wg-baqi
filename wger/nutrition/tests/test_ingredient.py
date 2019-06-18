@@ -74,6 +74,7 @@ class EditIngredientTestCase(WorkoutManagerEditTestCase):
             'protein': 20,
             'carbohydrates': 10,
             'license': 2,
+            'language': 1,
             'license_author': 'me!'}
 
     def post_test_hook(self):
@@ -103,6 +104,7 @@ class AddIngredientTestCase(WorkoutManagerAddTestCase):
             'protein': 20,
             'carbohydrates': 10,
             'license': 2,
+            'language': 1,
             'license_author': 'me!'}
 
     def post_test_hook(self):
@@ -152,6 +154,15 @@ class IngredientDetailTestCase(WorkoutManagerTestCase):
         response = self.client.get(
             reverse('nutrition:ingredient:view', kwargs={'id': 42}))
         self.assertEqual(response.status_code, 404)
+
+    def filter_ingredient_by_language(self, editor=False):
+        '''
+        Tests the ingredient details page
+        '''
+
+        response = self.client.get(
+            reverse('nutrition:ingredient:view', params={lang: "en"}))
+        self.assertEqual(response.status_code, 200)
 
     def test_ingredient_detail_editor(self):
         '''

@@ -20,6 +20,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.core import mail
 from django.urls import reverse, reverse_lazy
 from django.core.cache import cache
+from wger.core.models import Language
 from django.contrib.auth.mixins import (
     PermissionRequiredMixin, LoginRequiredMixin)
 from django.contrib.auth.decorators import permission_required
@@ -61,16 +62,21 @@ class IngredientListView(ListView):
     def get_queryset(self):
         '''
         Filter the ingredients the user will see by its language
-
-        (the user can also want to see ingredients in English, in addition to
-        his
+        (the user can also want to see ingredients in English, in addition to his
         native language, see load_ingredient_languages)
         '''
-        languages = load_ingredient_languages(self.request)
+
+        query_language = self.request.GET.get('lang', None)
+        language = None
+        if query_language:
+            ln = Language.objects.filter(short_name=query_language)
+            if ln.exists():
+                language = ln.first().id
+        if language:
+            return (Ingredient.objects.filter(language=language)
+                    .filter(status__in=Ingredient.INGREDIENT_STATUS_OK).only('id', 'name'))
         return (Ingredient.objects.filter(
-            language__in=languages)
-            .filter(status__in=Ingredient.INGREDIENT_STATUS_OK)
-            .only('id', 'name'))
+                status__in=Ingredient.INGREDIENT_STATUS_OK).only('id', 'name'))
 
     def get_context_data(self, **kwargs):
         '''
@@ -147,7 +153,8 @@ class IngredientMixin(WgerFormMixin):
               'fibres',
               'sodium',
               'license',
-              'license_author']
+              'license_author',
+              'language']
 
 
 class IngredientEditView(IngredientMixin, LoginRequiredMixin,
@@ -194,7 +201,9 @@ class IngredientCreateView(IngredientMixin, CreateView):
                              message,
                              fail_silently=True)
 
-        form.instance.language = load_language()
+        form.instance.language = load_language(
+            load_language(form.instance.language.short_name)
+        )
         return super(IngredientCreateView, self).form_valid(form)
 
     def dispatch(self, request, *args, **kwargs):
