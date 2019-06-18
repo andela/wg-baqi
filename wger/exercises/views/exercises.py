@@ -40,6 +40,7 @@ from django.views.generic import (
     CreateView,
     UpdateView
 )
+from wger.core.models import Language
 from wger.manager.models import WorkoutLog
 from wger.exercises.models import (
     Exercise,
@@ -75,9 +76,24 @@ class ExerciseListView(ListView):
 
     def get_queryset(self):
         '''
-        Filter to only active exercises in the configured languages
+        Filter to only active exercises in
+        the configured languages
         '''
         languages = load_item_languages(LanguageConfig.SHOW_ITEM_EXERCISES)
+
+        selected_lang = self.request.GET.get('lang', None)
+        language = None
+
+        if selected_lang:
+            lang = Language.objects.filter(short_name=selected_lang)
+            if lang.exists():
+                language = lang.first().id
+        if language:
+            return Exercise.objects.accepted() \
+                .filter(language=language) \
+                .order_by('category__id') \
+                .select_related()
+
         return Exercise.objects.accepted() \
             .filter(language__in=languages) \
             .order_by('category__id') \
@@ -197,6 +213,7 @@ class ExercisesEditAddView(WgerFormMixin):
                           'muscles_secondary',
                           'equipment',
                           'license',
+                          'language',
                           'license_author']
 
             class Media:
@@ -234,7 +251,8 @@ class ExerciseAddView(ExercisesEditAddView, LoginRequiredMixin, CreateView):
         '''
         Set language, author and status
         '''
-        form.instance.language = load_language()
+        form.instance.language = load_language(
+            form.instance.language.short_name)
         form.instance.set_author(self.request)
         return super(ExerciseAddView, self).form_valid(form)
 

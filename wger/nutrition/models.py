@@ -251,7 +251,7 @@ class Ingredient(AbstractLicenseModel, models.Model):
 
     language = models.ForeignKey(Language,
                                  verbose_name=_('Language'),
-                                 editable=False, on_delete=models.CASCADE)
+                                 on_delete=models.CASCADE)
 
     user = models.ForeignKey(User,
                              verbose_name=_('User'),

@@ -171,7 +171,8 @@ class Exercise(AbstractSubmissionModel, AbstractLicenseModel, models.Model):
         verbose_name=_('Category'), on_delete=models.CASCADE)
     description = models.TextField(max_length=2000,
                                    verbose_name=_('Description'),
-                                   validators=[MinLengthValidator(40)])
+                                   default='Keeps the body fit',
+                                   validators=[MinLengthValidator(10)])
     '''Description on how to perform the exercise'''
 
     name = models.CharField(max_length=200,

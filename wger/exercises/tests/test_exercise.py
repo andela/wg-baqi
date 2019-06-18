@@ -243,6 +243,7 @@ class ExercisesTestCase(WorkoutManagerTestCase):
                                     {'category': 2,
                                      'name_original': 'my test exercise',
                                      'license': 1,
+                                     'language': 1,
                                      'muscles': [1, 2]})
         count_after = Exercise.objects.count()
         self.assertIn(response.status_code, STATUS_CODES_FAIL)
@@ -267,6 +268,17 @@ class ExercisesTestCase(WorkoutManagerTestCase):
         self.add_exercise_user_fail()
         self.user_logout()
 
+    def filter_exercise_by_language(self, admin=False):
+        '''
+        Test items filtered by language
+        '''
+
+         # Add an exercise
+        count_before = Exercise.objects.count()
+        description = 'a nice, long and accurate description for the exercise'
+        response = self.client.post(reverse('exercise:exercise:overview'), params={lang: "en"})
+        self.assertEqual(response.status_code, 200)
+
     def add_exercise_success(self, admin=True):
         '''
         Tests adding/editing an exercise with a user with enough rights to do
@@ -280,6 +292,7 @@ class ExercisesTestCase(WorkoutManagerTestCase):
                                     {'category': 2,
                                      'name_original': 'my test exercise',
                                      'license': 1,
+                                     'language': 1,
                                      'description': description,
                                      'muscles': [1, 2]})
         count_after = Exercise.objects.count()
@@ -315,6 +328,7 @@ class ExercisesTestCase(WorkoutManagerTestCase):
                                     {'category': 111,
                                      'name_original': 'my test exercise',
                                      'license': 1,
+                                     'language': 1,
                                      'muscles': [1, 2]})
         self.assertTrue(response.context['form'].errors['category'])
 
@@ -324,6 +338,7 @@ class ExercisesTestCase(WorkoutManagerTestCase):
             {'category': 111,
              'name_original': 'my test exercise',
              'license': 1,
+             'language': 1,
              'muscles': [1, 2]})
         if admin:
             self.assertTrue(response.context['form'].errors['category'])
@@ -335,6 +350,7 @@ class ExercisesTestCase(WorkoutManagerTestCase):
                                     {'category': 1,
                                      'name_original': 'my test exercise',
                                      'license': 1,
+                                     'language': 1,
                                      'muscles': []})
         self.assertFalse(response.context['form'].errors.get('muscles'))
 
@@ -344,6 +360,7 @@ class ExercisesTestCase(WorkoutManagerTestCase):
             {'category': 1,
              'name_original': 'my test exercise',
              'license': 1,
+             'language': 1,
              'muscles': []})
         if admin:
             self.assertFalse(response.context['form'].errors.get('muscles'))
