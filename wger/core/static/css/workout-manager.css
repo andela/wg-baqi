@@ -139,6 +139,19 @@ div.muscle-background
     background-repeat: no-repeat;
 }
 
+#svg-front {
+    display: block;
+    transform: translate(-25px, -48px)scale(0.75);
+    opacity: 0;
+ }
+#svg-back{
+    display: block;
+    transform: translate(-26px, -50px) scale(0.74, 0.701);
+    opacity: 0;
+    position: absolute;
+    top: 47px;
+}
+
 /*
  * Set an additional padding to the generated DIV on the edit set page
  */
