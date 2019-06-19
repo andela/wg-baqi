@@ -160,7 +160,7 @@ class WeightLogOverviewAddTestCase(WorkoutManagerTestCase):
     Tests the weight log functionality
     '''
 
-    def add_weight_log(self, fail=True):
+    def add_weight_log(self, fail=True, rel=False):
         '''
         Helper function to test adding weight log entries
         '''
@@ -204,6 +204,7 @@ class WeightLogOverviewAddTestCase(WorkoutManagerTestCase):
              'form-MAX-NUM_FORMS': 3
              })
         count_after = WorkoutLog.objects.count()
+        latest_added = WorkoutLog.objects.all()[0]
 
         # Logged out users get a 302 redirect to login page
         # Users not owning the workout, a 403, forbidden
@@ -213,6 +214,8 @@ class WeightLogOverviewAddTestCase(WorkoutManagerTestCase):
         else:
             self.assertEqual(response.status_code, 302)
             self.assertGreater(count_after, count_before)
+            self.assertEqual(latest_added.session_id, 5)
+            self.assertTrue(isinstance(latest_added.session_id, int))
 
     def test_add_weight_log_anonymous(self):
         '''
@@ -254,7 +257,7 @@ class WeightlogTestCase(WorkoutManagerTestCase):
         workout2 = Workout.objects.get(pk=2)
 
         WorkoutLog.objects.all().delete()
-        l = WorkoutLog() # noqa
+        l = WorkoutLog()  # noqa
         l.user = user1
         l.date = datetime.date(2014, 1, 5)
         l.exercise = Exercise.objects.get(pk=1)
