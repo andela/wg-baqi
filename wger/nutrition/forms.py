@@ -128,6 +128,12 @@ class MealItemForm(forms.ModelForm):
         required=False)
     ingredient = forms.ModelChoiceField(queryset=Ingredient.objects.all(),
                                         widget=forms.HiddenInput)
+    Type_of_meal = (
+        ('Planned', 'Planned'),
+        ('Consumed', 'Consumed')
+    )
+
+    meal_type = forms.ChoiceField(label='Meal Type', widget=forms.Select, choices=Type_of_meal)
     time = forms.TimeField(required=False,
                            label=_('Time'),
                            widget=forms.TimeInput)

@@ -75,7 +75,8 @@ class AddNewMealTestCase(WorkoutManagerTestCase):
         data = {'amount': 1,
                 'ingredient': 1,
                 'weight_unit': 1,
-                'time': datetime.time(9, 5)}
+                'time': datetime.time(9, 5),
+                'meal_type': 'Planned'}
 
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)  # redirects on success
