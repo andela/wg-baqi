@@ -175,7 +175,7 @@ def create_settings(
         dbuser = ''
         dbpassword = ''
         dbhost = ''
-        
+
 
         dbport = ''
 
