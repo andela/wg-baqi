@@ -216,10 +216,14 @@ class Exercise(AbstractSubmissionModel, AbstractLicenseModel, models.Model):
                             max_length=36,
                             editable=False,
                             default=uuid.uuid4)
+
+    author = models.ForeignKey(User,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
     '''
     Globally unique ID, to identify the exercise across installations
     '''
-
     #
     # Django methods
     #
@@ -340,6 +344,8 @@ class Exercise(AbstractSubmissionModel, AbstractLicenseModel, models.Model):
 
         This is only used when creating exercises (via web or API)
         '''
+        self.author = request.user
+        
         if request.user.has_perm('exercises.add_exercise'):
             self.status = self.STATUS_ACCEPTED
             if not self.license_author:
