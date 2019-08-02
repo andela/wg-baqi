@@ -31,6 +31,7 @@ addons:
 before_script:
   - psql -c 'create database test_wger;' -U postgres
   - invoke create-settings --settings-path ./wger/settings.py --database-type postgresql
+  - python manage.py makemigrations --merge --noinput
   - invoke bootstrap-wger --settings-path ./wger/settings.py --no-start-server
   - invoke bootstrap-wger --settings-path ./wger/settings.py --no-start-server
 

@@ -313,6 +313,7 @@ class ExercisesTestCase(WorkoutManagerTestCase):
             self.assertEqual(exercise.license_author, 'test')
             self.assertEqual(exercise.status, Exercise.STATUS_PENDING)
 
+        self.assertNotEqual(exercise.author, None)
         response = self.client.get(reverse(
             'exercise:exercise:view', kwargs={'id': exercise_id}))
         self.assertEqual(response.status_code, 200)
