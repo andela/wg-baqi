@@ -30,7 +30,7 @@ django-rest-framework-social-oauth2==1.1.0
 django-social-share==1.3.2
 django-sortedm2m==1.5.0
 django-tastypie==0.14.2
-djangorestframework==3.9.4
+djangorestframework==3.11.2
 djangorestframework-jwt==1.11.0
 docutils==0.14
 easy-thumbnails==2.6
